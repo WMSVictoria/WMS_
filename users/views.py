@@ -79,9 +79,9 @@ def activate(request, uidb64, token):
         user.is_active = True
         user.save()
         login(request, user)  # Automatically log in the user after activation
-        return redirect('users/registration_successful')  # Redirect to the registration successful page
+        return redirect('registration_successful')  # Redirect to the registration successful page
     else:
-        return redirect('users/registration_failed')  # Redirect to a failure page if the token is invalid
+        return redirect('registration_failed')  # Redirect to a failure page if the token is invalid
 
 
 from django.shortcuts import render, redirect
