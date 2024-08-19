@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import django_heroku
 from pathlib import Path
+import dj_database_url
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -77,14 +78,16 @@ WSGI_APPLICATION = 'wms_victoria.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'warehouse_db',
-        'USER': 'warehouse_user',
-        'PASSWORD': 'warehouse_user',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
+    'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
+    # {
+    #     # 'ENGINE': 'django.db.backends.postgresql',
+    #     # 'NAME': 'warehouse_db',
+    #     # 'USER': 'warehouse_user',
+    #     # 'PASSWORD': 'warehouse_user',
+    #     # 'HOST': 'localhost',
+    #     # 'PORT': '5432',
+
+    # }
 }
 
 
