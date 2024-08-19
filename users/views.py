@@ -67,7 +67,7 @@ def register(request):
             admin_email.content_subtype = "html"  # This tells Django to treat the email content as HTML
             admin_email.send()
 
-            return redirect('users/registration_pending')  # Inform user to check their email
+            return redirect('registration_pending')  # Inform user to check their email
     else:
         form = CustomUserCreationForm()
     return render(request, 'users/register.html', {'form': form})
