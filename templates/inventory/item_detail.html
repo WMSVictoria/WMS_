@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Item Detail</title>
+</head>
+<body>
+    <h1>Item Detail</h1>
+    <p>Name: {{ item.name }}</p>
+    <p>SKU: {{ item.sku }}</p>
+    <p>Description: {{ item.description }}</p>
+    <a href="{% url 'inventory_list' %}">Back to Inventory List</a>
+</body>
+</html>

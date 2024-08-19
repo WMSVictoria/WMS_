@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internal Transfers</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        #header {
+            background-color: navy;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        #header h1 {
+            margin: 0;
+        }
+        #header a {
+            color: white;
+            text-decoration: none;
+            padding: 5px 10px;
+            margin-left: 10px;
+            border-radius: 3px;
+        }
+        #header a:hover {
+            background-color: #003366;
+        }
+        .container {
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        a.button {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        a.button:hover {
+            background-color: #0056b3;
+        }
+        a.button-delete {
+            background-color: #dc3545;
+        }
+        a.button-delete:hover {
+            background-color: #c82333;
+        }
+        .actions a {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <h1>WMS Victoria Internal Transfers</h1>
+        <div>
+            <span>Welcome, {{ user.username }}!</span>
+            <a href="{% url 'logout' %}" class="button">Logout</a>
+        </div>
+    </div>
+    <div class="container">
+        <h2>Internal Transfers</h2>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Location</th>
+                    <th>Source Section</th>
+                    <th>Destination Section</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transfer in transfers %}
+                <tr>
+                    <td>{{ transfer.item }}</td>
+                    <td>{{ transfer.quantity }}</td>
+                    <td>{{ transfer.location }}</td>
+                    <td>{{ transfer.source_section }}</td>
+                    <td>{{ transfer.destination_section }}</td>
+                    <td class="actions">
+                        <a href="{% url 'internal_transfer_update' transfer.pk %}" class="button">Update</a>
+                        <a href="{% url 'internal_transfer_delete' transfer.pk %}" class="button button-delete">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="{% url 'internal_transfer' %}" class="button">Create New Transfer</a>
+    </div>
+</body>
+</html>

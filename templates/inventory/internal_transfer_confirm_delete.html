@@ -1,0 +1,16 @@
+<!-- templates/inventory/internal_transfer_confirm_delete.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Confirm Delete</title>
+</head>
+<body>
+    <h1>Confirm Delete</h1>
+    <p>Are you sure you want to delete the transfer for Item: {{ transfer.item }}?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Confirm</button>
+        <a href="{% url 'internal_transfer_list' %}">Cancel</a>
+    </form>
+</body>
+</html>

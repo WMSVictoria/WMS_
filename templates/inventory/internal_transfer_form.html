@@ -1,0 +1,16 @@
+<!-- templates/inventory/internal_transfer_form.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Internal Transfer</title>
+</head>
+<body>
+    <h1>Internal Transfer</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save</button>
+    </form>
+    <a href="{% url 'internal_transfer_list' %}">Back to List</a>
+</body>
+</html>

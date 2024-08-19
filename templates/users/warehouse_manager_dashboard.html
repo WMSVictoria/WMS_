@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Warehouse Manager Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+        header {
+            background-color: navy;
+            color: white;
+            padding: 10px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+        header .welcome {
+            float: right;
+            margin-right: 20px;
+        }
+        header .welcome a {
+            color: white;
+            text-decoration: none;
+            margin-left: 10px;
+            font-weight: bold;
+        }
+        header h1 {
+            margin: 0;
+            padding: 0;
+        }
+        nav {
+            width: 200px;
+            background-color: #f4f4f4;
+            position: fixed;
+            top: 50px;
+            bottom: 0;
+            left: 0;
+            padding-top: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        nav ul li {
+            margin: 10px 0;
+        }
+        nav ul li a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: #333;
+            background-color: #ddd;
+            border-radius: 4px;
+            text-align: center;
+        }
+        nav ul li a:hover {
+            background-color: #ccc;
+        }
+        .container {
+            margin-left: 220px; /* Space for the sidebar */
+            padding: 20px;
+            flex: 1;
+            margin-top: 70px; /* Space for the header */
+        }
+        .logout-button {
+            float: right;
+            margin-top: 15px;
+            margin-right: 20px;
+        }
+        .logout-button a {
+            color: white;
+            text-decoration: none;
+            background-color: red;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .logout-button a:hover {
+            background-color: darkred;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="welcome">
+            Welcome, {{ user.username }} |
+            <a href="{% url 'logout' %}">Logout</a>
+        </div>
+        <h1>Warehouse Manager Dashboard</h1>
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="{% url 'inventory_list' %}">Inventory Management</a></li>
+            <li><a href="{% url 'order_list' %}">Order Management</a></li>
+            <li><a href="{% url 'internal_transfer_list' %}">Internal Transfers</a></li>
+            <li><a href="{% url 'customer_list' %}">Customers</a></li>
+            <li><a href="{% url 'supplier_list' %}">Suppliers</a></li>
+            
+        </ul>
+    </nav>
+    
+    <div class="container">
+        <!-- Main content will go here -->
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Order Detail</title>
+</head>
+<body>
+    <h1>Order {{ order.id }}</h1>
+    <p>Customer: {{ order.customer.username }}</p>
+    <p>Order Date: {{ order.order_date }}</p>
+    <p>Status: {{ order.status }}</p>
+    <p>Shipping Address: {{ order.shipping_address }}</p>
+    <h2>Order Items</h2>
+    <ul>
+        {% for item in order.items.all %}
+            <li>{{ item.item.name }} - {{ item.quantity }}</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'update_order' order.id %}">Update Order</a>
+    <a href="{% url 'pick_order' %}">Pick Order</a>
+    <a href="{% url 'ship_order' order.id %}">Ship Order</a>
+    <a href="{% url 'order_list' %}">Back to Order List</a>
+</body>
+</html>

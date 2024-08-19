@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Modify Stock</title>
+</head>
+<body>
+    <h1>Modify Stock</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Location</th>
+                <th>Section</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for inventory in inventory_items %}
+            <tr>
+                <td>{{ inventory.item.name }}</td>
+                <td>{{ inventory.quantity }}</td>
+                <td>{{ inventory.location }}</td>
+                <td>{{ inventory.section }}</td>
+                <td>
+                    <a href="{% url 'inventory_update' inventory.pk %}">Update</a> |
+                    <a href="{% url 'inventory_delete' inventory.pk %}">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'inventory_list' %}">Back to Inventory List</a>
+</body>
+</html>

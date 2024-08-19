@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Modify Item</title>
+</head>
+<body>
+    <h1>Modify Item</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>SKU</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.sku }}</td>
+                <td>{{ item.description }}</td>
+                <td>
+                    <a href="{% url 'item_update' item.pk %}">Update</a> |
+                    <a href="{% url 'item_delete' item.pk %}">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'inventory_list' %}">Back to Inventory List</a>
+</body>
+</html>
