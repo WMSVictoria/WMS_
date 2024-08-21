@@ -16,11 +16,14 @@
             color: white;
             padding: 10px 20px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            position: relative;
+            width: 100%;
         }
         #header h1 {
             margin: 0;
+            flex: 1;
+            text-align: center;
         }
         #header a {
             color: white;
@@ -31,6 +34,21 @@
         }
         #header a:hover {
             background-color: #003366;
+        }
+        #dashboard-button {
+            background-color: #28a745;
+            margin-right: auto;
+        }
+        #dashboard-button:hover {
+            background-color: #218838;
+        }
+        #user-info {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+        }
+        #user-info span {
+            margin-right: 10px;
         }
         .container {
             padding: 20px;
@@ -75,8 +93,16 @@
 </head>
 <body>
     <div id="header">
+        <!-- Dashboard Button -->
+        {% if is_manager %}
+            <a href="{% url 'warehouse_manager_dashboard' %}" id="dashboard-button" class="button">Manager Dashboard</a>
+        {% elif is_staff %}
+            <a href="{% url 'warehouse_staff_dashboard' %}" id="dashboard-button" class="button">Staff Dashboard</a>
+        {% endif %}
+        
         <h1>WMS Victoria Inventory</h1>
-        <div>
+        
+        <div id="user-info">
             <span>Welcome, {{ user.username }}!</span>
             <a href="{% url 'logout' %}" class="button">Logout</a>
         </div>

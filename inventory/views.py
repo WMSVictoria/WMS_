@@ -2,9 +2,28 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Item, Inventory
 from .forms import ItemForm, InventoryForm, ItemUpdateForm, InventoryUpdateForm
 
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from .models import Inventory
+
+@login_required
 def inventory_list(request):
+    # Fetch inventory items
     inventory_items = Inventory.objects.all()
-    return render(request, 'inventory/inventory_list.html', {'inventory_items': inventory_items})
+
+    # Determine if the user is in the warehouse_managers or warehouse_staff group
+    is_manager = request.user.groups.filter(name='warehouse_managers').exists()
+    is_staff = request.user.groups.filter(name='warehouse_staff').exists()
+
+    # Pass the inventory items and user group information to the template
+    context = {
+        'inventory_items': inventory_items,
+        'is_manager': is_manager,
+        'is_staff': is_staff,
+    }
+
+    return render(request, 'inventory/inventory_list.html', context)
+
 
 def add_stock(request):
     if request.method == 'POST':
@@ -375,58 +394,272 @@ def delete_item(request, pk):
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import  Order, Customer
 
+from django.shortcuts import render
 
 
+def inventory_report(request):
+    # Fetch all inventory records
+    inventory_items = Inventory.objects.all()
 
-# def shipping_create(request, order_id=None):
-#     order = get_object_or_404(Order, pk=order_id) if order_id else None
+    # Determine low stock items (for example, if the quantity is less than 10)
+    low_stock_threshold = 10
+    low_stock_items = inventory_items.filter(quantity__lt=low_stock_threshold)
 
-#     if request.method == 'POST':
-#         form = ShippingForm(request.POST, order=order)
-#         if form.is_valid():
-#             shipping = form.save(commit=False)
-#             shipping.order = order
-#             shipping.save()
-#             return redirect('shipping_list')
-#     else:
-#         form = ShippingForm(order=order)
-
-#     return render(request, 'inventory/shipping_form.html', {'form': form})
-
-
-
-
-
-# def shipping_update(request, pk):
-#     shipping = get_object_or_404(Shipping, pk=pk)
-#     if request.method == 'POST':
-#         form = ShippingForm(request.POST, instance=shipping)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('shipping_list')
-#     else:
-#         form = ShippingForm(instance=shipping, order=shipping.order, customer=shipping.customer)
-    
-#     return render(request, 'inventory/shipping_form.html', {'form': form})
+    return render(request, 'inventory/inventory_report.html', {
+        'inventory_items': inventory_items,
+        'low_stock_items': low_stock_items,
+        'low_stock_threshold': low_stock_threshold
+    })
 
 from django.shortcuts import render
-#from .models import Shipping
+from django.db.models import Sum
+from .models import Inventory, Order
+from datetime import datetime, timedelta
 
-# def shipping_list(request):
-#     shippings = Shipping.objects.all()
-#     return render(request, 'inventory/shipping_list.html', {'shippings': shippings})
+def inventory_turnover(request):
+    # Define the period for analysis (e.g., the last 30 days)
+    end_date = datetime.now()
+    start_date = end_date - timedelta(days=30)
+
+    # Calculate the total quantity sold for each item during the period
+    items_sold = Order.objects.filter(date__range=[start_date, end_date]).values('item').annotate(total_sold=Sum('quantity'))
+
+    # Calculate the average inventory for each item (assuming constant inventory levels for simplicity)
+    inventory_levels = Inventory.objects.all()
+
+    turnover_data = []
+    for inventory_item in inventory_levels:
+        item_sales = next((item['total_sold'] for item in items_sold if item['item'] == inventory_item.item.id), 0)
+        average_inventory = inventory_item.quantity
+        turnover_rate = item_sales / average_inventory if average_inventory > 0 else 0
+        
+        turnover_data.append({
+            'item': inventory_item.item.name,
+            'location': inventory_item.location,
+            'section': inventory_item.section,
+            'total_sold': item_sales,
+            'average_inventory': average_inventory,
+            'turnover_rate': turnover_rate,
+        })
+
+    return render(request, 'inventory/inventory_turnover.html', {
+        'turnover_data': turnover_data,
+        'start_date': start_date,
+        'end_date': end_date,
+    })
+
+# views.py
+
+from django.shortcuts import render
+from .models import Order
+from django import forms
+from datetime import datetime
+
+class DateRangeForm(forms.Form):
+    start_date = forms.DateField(widget=forms.SelectDateWidget)
+    end_date = forms.DateField(widget=forms.SelectDateWidget)
+
+def order_fulfillment_report(request):
+    # Default date range (last 30 days)
+    end_date = datetime.now().date()
+    start_date = end_date - timedelta(days=30)
+
+    if request.method == 'POST':
+        form = DateRangeForm(request.POST)
+        if form.is_valid():
+            start_date = form.cleaned_data['start_date']
+            end_date = form.cleaned_data['end_date']
+    else:
+        form = DateRangeForm(initial={'start_date': start_date, 'end_date': end_date})
+
+    # Query orders within the selected date range
+    orders = Order.objects.filter(date__range=[start_date, end_date])
+
+    # Calculate the number of shipped and pending orders
+    total_orders = orders.count()
+    shipped_orders = orders.filter(status='Shipped').count()
+    pending_orders = orders.filter(status='Pending').count()
+
+    # Calculate fulfillment rate
+    fulfillment_rate = (shipped_orders / total_orders * 100) if total_orders > 0 else 0
+
+    return render(request, 'inventory/order_fulfillment_report.html', {
+        'form': form,
+        'total_orders': total_orders,
+        'shipped_orders': shipped_orders,
+        'pending_orders': pending_orders,
+        'fulfillment_rate': fulfillment_rate,
+        'start_date': start_date,
+        'end_date': end_date,
+    })
+
+# views.py
+
+from django.shortcuts import render
+from .models import Receiving  # Assuming there's a Receiving model tracking received goods
+from django import forms
+from datetime import datetime, timedelta
+
+# views.py
+
+from django.shortcuts import render
+from .models import Receiving  # Assuming there's a Receiving model tracking received goods
+from django import forms
+from datetime import datetime, timedelta
+
+class DateRangeForm(forms.Form):
+    start_date = forms.DateField(widget=forms.SelectDateWidget)
+    end_date = forms.DateField(widget=forms.SelectDateWidget)
+
+def goods_received_report(request):
+    # Default date range (last 30 days)
+    end_date = datetime.now().date()
+    start_date = end_date - timedelta(days=30)
+
+    if request.method == 'POST':
+        form = DateRangeForm(request.POST)
+        if form.is_valid():
+            start_date = form.cleaned_data['start_date']
+            end_date = form.cleaned_data['end_date']
+    else:
+        form = DateRangeForm(initial={'start_date': start_date, 'end_date': end_date})
+
+    # Query the received goods within the selected date range
+    received_goods = Receiving.objects.filter(received_date__range=[start_date, end_date])
+
+    return render(request, 'inventory/goods_received_report.html', {
+        'form': form,
+        'received_goods': received_goods,
+        'start_date': start_date,
+        'end_date': end_date,
+    })
 
 
-# from django.http import JsonResponse
-# from .models import Order
+# views.py
 
-# def get_customer_address(request, order_id):
-#     order = get_object_or_404(Order, pk=order_id)
-#     customer = order.customer
-#     response_data = {
-#         'customer_name': customer.name,
-#         'shipping_address': customer.address,
-#     }
-#     return JsonResponse(response_data)
+from django.shortcuts import render
+from .models import InternalTransfer
+from django import forms
+from datetime import datetime, timedelta
+
+class DateRangeForm(forms.Form):
+    start_date = forms.DateField(widget=forms.SelectDateWidget)
+    end_date = forms.DateField(widget=forms.SelectDateWidget)
+
+def transfer_history_report(request):
+    # Default date range (last 30 days)
+    end_date = datetime.now().date()
+    start_date = end_date - timedelta(days=30)
+
+    if request.method == 'POST':
+        form = DateRangeForm(request.POST)
+        if form.is_valid():
+            start_date = form.cleaned_data['start_date']
+            end_date = form.cleaned_data['end_date']
+    else:
+        form = DateRangeForm(initial={'start_date': start_date, 'end_date': end_date})
+
+    # Query the internal transfers within the selected date range
+    transfers = InternalTransfer.objects.filter(date__range=[start_date, end_date])
+
+    return render(request, 'inventory/transfer_history_report.html', {
+        'form': form,
+        'transfers': transfers,
+        'start_date': start_date,
+        'end_date': end_date,
+    })
+
+
+# views.py
+
+from django.shortcuts import render
+from .models import Order, InternalTransfer, Inventory
+from .forms import AdHocReportForm
+from datetime import datetime
+
+def ad_hoc_report(request):
+    form = AdHocReportForm(request.POST or None)
+    report_data = None
+
+    if request.method == 'POST' and form.is_valid():
+        report_type = form.cleaned_data['report_type']
+        date_range = form.cleaned_data['date_range']
+        start_date = form.cleaned_data['start_date']
+        end_date = form.cleaned_data['end_date']
+        location = form.cleaned_data['location']
+        item = form.cleaned_data['item']
+        section = form.cleaned_data['section']
+        customer = form.cleaned_data['customer']
+
+        # Set date range if custom range is selected
+        if date_range == 'custom' and (start_date and end_date):
+            date_filter = {'date__range': [start_date, end_date]}
+        else:
+            date_filter = {}
+
+        # Generate report based on selected type
+        if report_type == 'orders':
+            report_data = Order.objects.filter(**date_filter)
+            if location:
+                report_data = report_data.filter(item__inventory__location=location)
+            if item:
+                report_data = report_data.filter(item=item)
+            if section:
+                report_data = report_data.filter(item__inventory__section=section)
+            if customer:
+                report_data = report_data.filter(customer=customer)
+        elif report_type == 'transfers':
+            report_data = InternalTransfer.objects.filter(**date_filter)
+            if location:
+                report_data = report_data.filter(location=location)
+            if item:
+                report_data = report_data.filter(item=item)
+            if section:
+                report_data = report_data.filter(source_section=section) | report_data.filter(destination_section=section)
+        elif report_type == 'inventory':
+            report_data = Inventory.objects.filter(**date_filter)
+            if location:
+                report_data = report_data.filter(location=location)
+            if item:
+                report_data = report_data.filter(item=item)
+            if section:
+                report_data = report_data.filter(section=section)
+
+    return render(request, 'inventory/ad_hoc_report.html', {
+        'form': form,
+        'report_data': report_data
+    })
+
+# views.py
+
+from django.http import JsonResponse
+from django.db.models import Sum
+from .models import Inventory, Order, InternalTransfer
+from django.utils.timezone import now
+
+def inventory_levels(request):
+    # Aggregate data for current inventory levels
+    data = Inventory.objects.values('location', 'section').annotate(total_quantity=Sum('quantity')).order_by('location', 'section')
+    inventory_data = {
+        'labels': [f"{item['location']} - {item['section']}" for item in data],
+        'data': [item['total_quantity'] for item in data]
+    }
+    return JsonResponse(inventory_data)
+
+def order_backlog(request):
+    # Count the number of orders that are pending
+    backlog_count = Order.objects.filter(status='Pending').count()
+    return JsonResponse({'count': backlog_count})
+
+def transfer_volume(request):
+    # Aggregate data for transfer volumes
+    start_date = request.GET.get('start_date', now().date())
+    end_date = request.GET.get('end_date', now().date())
+    transfers = InternalTransfer.objects.filter(date__range=[start_date, end_date]).values('date').annotate(total_quantity=Sum('quantity')).order_by('date')
+    transfer_data = {
+        'labels': [item['date'].strftime('%b %Y') for item in transfers],
+        'data': [item['total_quantity'] for item in transfers]
+    }
+    return JsonResponse(transfer_data)
 
 

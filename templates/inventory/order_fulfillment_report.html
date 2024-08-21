@@ -1,0 +1,38 @@
+<!-- templates/order/order_fulfillment_report.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Order Fulfillment Report</title>
+</head>
+<body>
+    <h1>Order Fulfillment Report</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Generate Report</button>
+    </form>
+
+    <h2>Report for: {{ start_date }} to {{ end_date }}</h2>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Total Orders</th>
+                <th>Shipped Orders</th>
+                <th>Pending Orders</th>
+                <th>Fulfillment Rate (%)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ total_orders }}</td>
+                <td>{{ shipped_orders }}</td>
+                <td>{{ pending_orders }}</td>
+                <td>{{ fulfillment_rate|floatformat:2 }}</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

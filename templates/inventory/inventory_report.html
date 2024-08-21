@@ -1,0 +1,41 @@
+<!-- templates/inventory/inventory_report.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Current Inventory Levels</title>
+    <style>
+        .low-stock {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Current Inventory Levels</h1>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Location</th>
+                <th>Section</th>
+                <th>Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in inventory_items %}
+                <tr class="{% if item in low_stock_items %}low-stock{% endif %}">
+                    <td>{{ item.item.name }}</td>
+                    <td>{{ item.location }}</td>
+                    <td>{{ item.section }}</td>
+                    <td>{{ item.quantity }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Low Stock Alerts</h2>
+    <p>Items with quantity below {{ low_stock_threshold }} are highlighted in red.</p>
+</body>
+</html>

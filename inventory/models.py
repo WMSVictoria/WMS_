@@ -123,6 +123,7 @@ class Section(models.Model):
 
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.utils.timezone import now
 
 class InternalTransfer(models.Model):
     LOCATION_CHOICES = [
@@ -146,6 +147,7 @@ class InternalTransfer(models.Model):
     location = models.CharField(max_length=50, choices=LOCATION_CHOICES)
     source_section = models.CharField(max_length=50, choices=SECTION_CHOICES, default='Select Section')
     destination_section = models.CharField(max_length=50, choices=SECTION_CHOICES, default='Select Section')
+    date = models.DateField(default=now)
 
     def clean(self):
         # Ensure that source and destination sections are within the same location

@@ -1,0 +1,79 @@
+<!-- templates/inventory/ad_hoc_report.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ad-Hoc Reporting</title>
+</head>
+<body>
+    <h1>Ad-Hoc Reporting</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Generate Report</button>
+    </form>
+
+    {% if report_data %}
+        <h2>Report Results</h2>
+        <table border="1">
+            <thead>
+                {% if form.cleaned_data.report_type == 'orders' %}
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
+                {% elif form.cleaned_data.report_type == 'transfers' %}
+                    <tr>
+                        <th>Transfer ID</th>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                        <th>Location</th>
+                        <th>Source Section</th>
+                        <th>Destination Section</th>
+                        <th>Date</th>
+                    </tr>
+                {% elif form.cleaned_data.report_type == 'inventory' %}
+                    <tr>
+                        <th>Item</th>
+                        <th>Location</th>
+                        <th>Section</th>
+                        <th>Quantity</th>
+                    </tr>
+                {% endif %}
+            </thead>
+            <tbody>
+                {% for entry in report_data %}
+                    <tr>
+                        {% if form.cleaned_data.report_type == 'orders' %}
+                            <td>{{ entry.id }}</td>
+                            <td>{{ entry.customer.name }}</td>
+                            <td>{{ entry.item.name }}</td>
+                            <td>{{ entry.quantity }}</td>
+                            <td>{{ entry.date }}</td>
+                            <td>{{ entry.status }}</td>
+                        {% elif form.cleaned_data.report_type == 'transfers' %}
+                            <td>{{ entry.id }}</td>
+                            <td>{{ entry.item.name }}</td>
+                            <td>{{ entry.quantity }}</td>
+                            <td>{{ entry.location }}</td>
+                            <td>{{ entry.source_section }}</td>
+                            <td>{{ entry.destination_section }}</td>
+                            <td>{{ entry.date }}</td>
+                        {% elif form.cleaned_data.report_type == 'inventory' %}
+                            <td>{{ entry.item.name }}</td>
+                            <td>{{ entry.location }}</td>
+                            <td>{{ entry.section }}</td>
+                            <td>{{ entry.quantity }}</td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</body>
+</html>

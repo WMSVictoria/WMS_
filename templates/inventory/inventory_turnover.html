@@ -1,0 +1,39 @@
+<!-- templates/inventory/inventory_turnover.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Inventory Turnover Rate</title>
+</head>
+<body>
+    <h1>Inventory Turnover Rate Analysis</h1>
+    <p>Period: {{ start_date }} to {{ end_date }}</p>
+    
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Location</th>
+                <th>Section</th>
+                <th>Total Sold</th>
+                <th>Average Inventory</th>
+                <th>Turnover Rate</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for data in turnover_data %}
+                <tr>
+                    <td>{{ data.item }}</td>
+                    <td>{{ data.location }}</td>
+                    <td>{{ data.section }}</td>
+                    <td>{{ data.total_sold }}</td>
+                    <td>{{ data.average_inventory }}</td>
+                    <td>{{ data.turnover_rate|floatformat:2 }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <p>Note: A higher turnover rate indicates that the item is sold and replaced quickly, while a lower turnover rate may indicate slow-moving inventory.</p>
+</body>
+</html>

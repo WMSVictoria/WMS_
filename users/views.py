@@ -67,7 +67,7 @@ def register(request):
             admin_email.content_subtype = "html"  # This tells Django to treat the email content as HTML
             admin_email.send()
 
-            return redirect('users/registration_pending')  # Inform user to check their email
+            return redirect('registration_pending')  # Inform user to check their email
     else:
         form = CustomUserCreationForm()
     return render(request, 'users/register.html', {'form': form})
@@ -79,9 +79,9 @@ def activate(request, uidb64, token):
         user.is_active = True
         user.save()
         login(request, user)  # Automatically log in the user after activation
-        return redirect('users/registration_successful')  # Redirect to the registration successful page
+        return redirect('registration_successful')  # Redirect to the registration successful page
     else:
-        return redirect('users/registration_failed')  # Redirect to a failure page if the token is invalid
+        return redirect('registration_failed')  # Redirect to a failure page if the token is invalid
 
 
 from django.shortcuts import render, redirect

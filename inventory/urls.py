@@ -41,4 +41,13 @@ urlpatterns = [
     path('internal_transfers/', views.internal_transfer_list, name='internal_transfer_list'),
     path('internal_transfers/<int:pk>/update/', views.internal_transfer_update, name='internal_transfer_update'),
     path('internal_transfers/<int:pk>/delete/', views.internal_transfer_delete, name='internal_transfer_delete'),
+    path('inventory_report/', views.inventory_report, name='inventory_report'),
+    path('inventory_turnover/', views.inventory_turnover, name='inventory_turnover'),
+    path('order_fulfillment_report/', views.order_fulfillment_report, name='order_fulfillment_report'),
+    path('goods_received_report/', views.goods_received_report, name='goods_received_report'),
+    path('inventory/transfer_history/', views.transfer_history_report, name='transfer_history_report'),
+    path('inventory/ad_hoc_report/', views.ad_hoc_report, name='ad_hoc_report'),
+    path('api/inventory_levels/', views.inventory_levels, name='inventory_levels'),
+    path('api/order_backlog/', views.order_backlog, name='order_backlog'),
+    path('api/transfer_volume/', views.transfer_volume, name='transfer_volume'),
 ]

@@ -119,50 +119,32 @@ class CustomerForm(forms.ModelForm):
         fields = ['name', 'email', 'telephone', 'address', 'website']
 
 
-# from django import forms
-# from .models import Shipping, Order, Customer
+# forms.py
 
-# from django import forms
-# from .models import Shipping, Order
+from django import forms
 
-# from django import forms
-# from .models import Shipping, Order
+# forms.py
 
-# from django import forms
-# from .models import Shipping, Order, Customer
+from django import forms
+from .models import Order, InternalTransfer, Inventory
 
-# from django import forms
-# from .models import Shipping, Order, Customer
+class AdHocReportForm(forms.Form):
+    DATE_CHOICES = [
+        ('all', 'All Time'),
+        ('custom', 'Custom Range'),
+    ]
 
-# class ShippingForm(forms.ModelForm):
-#     class Meta:
-#         model = Shipping
-#         fields = ['order', 'shipping_address', 'shipping_status']
-#         widgets = {
-#             'order': forms.Select(),
-#             'shipping_address': forms.TextInput(attrs={'readonly': 'readonly'}),
-#         }
-
-#     def __init__(self, *args, **kwargs):
-#         order = kwargs.pop('order', None)
-#         super().__init__(*args, **kwargs)
-
-#         # Populate the order dropdown with all orders
-#         self.fields['order'].queryset = Order.objects.all()
-
-#         # If an order is provided, prepopulate the shipping address field
-#         if order:
-#             self.fields['order'].initial = order
-#             customer_name = order.customer.name
-#             # Check if a customer with this name exists in the Customer model
-#             try:
-#                 customer = Customer.objects.get(name=customer_name)
-#                 self.fields['shipping_address'].initial = customer.address
-#             except Customer.DoesNotExist:
-#                 self.fields['shipping_address'].initial = "Customer not found in database"
-            
-#             self.fields['shipping_address'].widget.attrs['readonly'] = True  # Make address field read-only
-
+    report_type = forms.ChoiceField(
+        choices=[('orders', 'Orders'), ('transfers', 'Transfers'), ('inventory', 'Inventory')],
+        required=True
+    )
+    date_range = forms.ChoiceField(choices=DATE_CHOICES, required=True)
+    start_date = forms.DateField(required=False, widget=forms.SelectDateWidget)
+    end_date = forms.DateField(required=False, widget=forms.SelectDateWidget)
+    location = forms.ChoiceField(choices=[(loc, loc) for loc in ['Melbourne', 'Kilmore', 'Stawell', 'Shepparton', 'Hamilton']], required=False)
+    item = forms.ModelChoiceField(queryset=Inventory.objects.values_list('item', flat=True).distinct(), required=False)
+    section = forms.ChoiceField(choices=[(sec, sec) for sec in ['Section I', 'Section II', 'Section III', 'Section IV', 'Section V']], required=False)
+    customer = forms.ModelChoiceField(queryset=Order.objects.values_list('customer', flat=True).distinct(), required=False)
 
 
 
