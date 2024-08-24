@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-&9crp&@kj@!p!1i$9n++_08=2u=v6+m%=e$54w*+t9wrn1fq+a
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['wmsvictoria-3d9b896f40e5.herokuapp.com']
 
 
 # Application definition
@@ -158,3 +158,8 @@ ADMIN_EMAIL = 'kevinogutu263@gmail.com'
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 django_heroku.settings(locals())
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
