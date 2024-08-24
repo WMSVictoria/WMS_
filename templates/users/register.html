@@ -5,7 +5,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background-color: #007bff; /* Blue background */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -14,11 +14,11 @@
         }
         .container {
             background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 400px;
+            max-width: 450px;
             text-align: center;
         }
         h2 {
@@ -28,27 +28,32 @@
         form {
             display: flex;
             flex-direction: column;
+            align-items: center;
         }
         form input[type="text"],
         form input[type="password"],
         form select {
-            padding: 10px;
+            padding: 12px;
             margin-bottom: 15px;
-            border-radius: 4px;
+            border-radius: 5px;
             border: 1px solid #ccc;
-            font-size: 14px;
+            font-size: 15px;
+            width: 100%;
+            box-sizing: border-box;
         }
         button {
-            padding: 10px;
-            background-color: #007bff;
+            padding: 12px;
+            background-color: #0056b3;
             border: none;
-            border-radius: 4px;
+            border-radius: 5px;
             color: white;
             font-size: 16px;
             cursor: pointer;
+            width: 100%;
+            box-sizing: border-box;
         }
         button:hover {
-            background-color: #0056b3;
+            background-color: #003d80;
         }
         .btn-link {
             margin-top: 15px;
@@ -57,10 +62,24 @@
             background-color: #6c757d;
             color: white;
             text-decoration: none;
-            border-radius: 4px;
+            border-radius: 5px;
         }
         .btn-link:hover {
             background-color: #5a6268;
+        }
+        .errorlist {
+            color: red;
+            list-style-type: none;
+            padding-left: 0;
+            margin-bottom: 15px;
+        }
+        .errorlist li {
+            font-size: 14px;
+        }
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-bottom: 15px;
         }
     </style>
 </head>
@@ -69,6 +88,13 @@
         <h2>Register</h2>
         <form method="post">
             {% csrf_token %}
+            {% if form.non_field_errors %}
+                <div class="error-message">
+                    {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
             {{ form.as_p }}
             <button type="submit">Register</button>
         </form>
