@@ -153,7 +153,7 @@ EMAIL_USE_SSL = False  # Use SSL for security (usually either TLS or SSL, not bo
 EMAIL_HOST_USER = 'kevinogutu263@gmail.com'  # Replace with your email address
 EMAIL_HOST_PASSWORD = 'atlabsmlosbuuqlj'  # Replace with your email account password
 DEFAULT_FROM_EMAIL = 'kevinogutu263@gmail.com'  # Default sender email address
-ADMIN_EMAIL = 'kevinogutu263@gmail.com'
+ADMIN_EMAIL = 'wmsvictoria@outlook.com'
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
