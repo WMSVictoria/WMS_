@@ -1,15 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    {% load static tailwind_tags %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Customer</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% tailwind_css %}
 </head>
-<body>
-    <h1>Create Customer</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Save</button>
-    </form>
-    <a href="{% url 'customer_list' %}">Back to Customer List</a>
+<body class="bg-gray-100 font-sans">
+    <header class="bg-blue-800 text-white p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-semibold">Create Customer</h1>
+            <a href="{% url 'customer_list' %}" class="bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded">Back to Customer List</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-6">
+        <div class="bg-white shadow-md rounded-lg p-6">
+            <form method="post" class="space-y-4">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">Save</button>
+            </form>
+        </div>
+    </main>
 </body>
 </html>

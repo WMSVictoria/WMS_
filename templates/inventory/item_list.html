@@ -1,33 +1,50 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    {% load static tailwind_tags %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Item List</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% tailwind_css %}
 </head>
-<body>
-    <h1>Item List</h1>
-    <a href="{% url 'add_item' %}">Add New Item</a>
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>SKU</th>
-                <th>Description</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in items %}
-            <tr>
-                <td>{{ item.name }}</td>
-                <td>{{ item.sku }}</td>
-                <td>{{ item.description }}</td>
-                <td>
-                    <a href="{% url 'edit_item' item.pk %}">Edit</a>
-                    <a href="{% url 'delete_item' item.pk %}">Delete</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<body class="bg-gray-100 font-sans">
+    <div class="container mx-auto p-6">
+        <header class="flex justify-between items-center bg-blue-800 text-white p-4 rounded-md shadow-md mb-6">
+            <h1 class="text-2xl font-semibold">Item List</h1>
+            <a href="{% url 'add_item' %}" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded">Add New Item</a>
+        </header>
+
+        <div class="overflow-x-auto mb-4">
+            <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="py-2 px-4 text-left text-gray-600">Name</th>
+                        <th class="py-2 px-4 text-left text-gray-600">SKU</th>
+                        <th class="py-2 px-4 text-left text-gray-600">Description</th>
+                        <th class="py-2 px-4 text-left text-gray-600">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="py-2 px-4">{{ item.name }}</td>
+                        <td class="py-2 px-4">{{ item.sku }}</td>
+                        <td class="py-2 px-4">{{ item.description }}</td>
+                        <td class="py-2 px-4 flex space-x-2">
+                            <a href="{% url 'edit_item' item.pk %}" class="bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded">Edit</a>
+                            <a href="{% url 'delete_item' item.pk %}" class="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Back to Inventory List Link -->
+        <div class="mt-4">
+            <a href="{% url 'inventory_list' %}" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">Back to Inventory List</a>
+        </div>
+    </div>
 </body>
 </html>

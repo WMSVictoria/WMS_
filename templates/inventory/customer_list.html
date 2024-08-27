@@ -1,115 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% load static tailwind_tags %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer List</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        #header {
-            background-color: navy;
-            color: white;
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        #header h1 {
-            margin: 0;
-        }
-        #header a {
-            color: white;
-            text-decoration: none;
-            padding: 5px 10px;
-            margin-left: 10px;
-            border-radius: 3px;
-        }
-        #header a:hover {
-            background-color: #003366;
-        }
-        .container {
-            padding: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-            background-color: #fff;
-            border: 1px solid #ddd;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        a.button {
-            display: inline-block;
-            background-color: #007bff;
-            color: white;
-            padding: 10px 15px;
-            text-decoration: none;
-            border-radius: 5px;
-            margin-right: 10px;
-        }
-        a.button:hover {
-            background-color: #0056b3;
-        }
-        a.button-delete {
-            background-color: #dc3545;
-        }
-        a.button-delete:hover {
-            background-color: #c82333;
-        }
-        .actions a {
-            margin-right: 10px;
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% tailwind_css %}
 </head>
-<body>
-    <div id="header">
-        <h1>Customer List</h1>
-        <div>
-            <span>Welcome, {{ user.username }}!</span>
-            <a href="{% url 'logout' %}" class="button">Logout</a>
+<body class="bg-gray-100 font-sans">
+    <header class="bg-blue-800 text-white p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex space-x-4">
+                {% if is_manager %}
+                    <a href="{% url 'warehouse_manager_dashboard' %}" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded">Manager Dashboard</a>
+                {% elif is_staff %}
+                    <a href="{% url 'warehouse_staff_dashboard' %}" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded">Staff Dashboard</a>
+                {% endif %}
+            </div>
+
+            <h1 class="text-xl font-semibold">Customer List</h1>
+
+            <div class="flex items-center space-x-4">
+                <span>Welcome, {{ user.username }}!</span>
+                <a href="{% url 'logout' %}" class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded">Logout</a>
+            </div>
         </div>
-    </div>
-    <div class="container">
-        <a href="{% url 'create_customer' %}" class="button">Add New Customer</a>
-        <table>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Telephone</th>
-                    <th>Address</th>
-                    <th>Website</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for customer in customers %}
-                <tr>
-                    <td>{{ customer.name }}</td>
-                    <td>{{ customer.email }}</td>
-                    <td>{{ customer.telephone }}</td>
-                    <td>{{ customer.address }}</td>
-                    <td>{{ customer.website }}</td>
-                    <td class="actions">
-                        <a href="{% url 'update_customer' customer.pk %}" class="button">Update</a>
-                        <a href="{% url 'delete_customer' customer.pk %}" class="button button-delete">Delete</a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+    </header>
+
+    <main class="container mx-auto p-6">
+        <div class="flex justify-end mb-4">
+            <a href="{% url 'create_customer' %}" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">Add New Customer</a>
+        </div>
+
+        <div class="bg-white shadow-md rounded-lg overflow-hidden">
+            <table class="min-w-full leading-normal">
+                <thead>
+                    <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                        <th class="py-3 px-6 text-left">Name</th>
+                        <th class="py-3 px-6 text-left">Email</th>
+                        <th class="py-3 px-6 text-left">Telephone</th>
+                        <th class="py-3 px-6 text-left">Address</th>
+                        <th class="py-3 px-6 text-left">Website</th>
+                        <th class="py-3 px-6 text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-700 text-sm font-light">
+                    {% for customer in customers %}
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-6 text-left">{{ customer.name }}</td>
+                        <td class="py-3 px-6 text-left">{{ customer.email }}</td>
+                        <td class="py-3 px-6 text-left">{{ customer.telephone }}</td>
+                        <td class="py-3 px-6 text-left">{{ customer.address }}</td>
+                        <td class="py-3 px-6 text-left">{{ customer.website }}</td>
+                        <td class="py-3 px-6 text-center">
+                            <a href="{% url 'update_customer' customer.pk %}" class="bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-3 rounded">Update</a>
+                            <a href="{% url 'delete_customer' customer.pk %}" class="bg-red-600 hover:bg-red-700 text-white py-1 px-3 rounded">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-6 flex justify-start">
+            <a href="{% url 'order_list' %}" class="bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded">Orders List</a>
+        </div>
+    </main>
 </body>
 </html>

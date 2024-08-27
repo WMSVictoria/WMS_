@@ -1,15 +1,31 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    {% load static tailwind_tags %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Supplier</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% tailwind_css %}
 </head>
-<body>
-    <h1>Add Supplier</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Add Supplier</button>
-    </form>
-    <a href="{% url 'supplier_list' %}">View Supplier List</a>
+<body class="bg-gray-100 font-sans">
+    <div class="container mx-auto p-6">
+        <!-- Header Section -->
+        <header class="bg-blue-800 text-white p-4 rounded-lg shadow-md mb-6">
+            <h1 class="text-2xl font-semibold">Add Supplier</h1>
+        </header>
+
+        <!-- Form Section -->
+        <form method="post" class="bg-white p-6 rounded-lg shadow-md">
+            {% csrf_token %}
+            <div class="space-y-4">
+                {{ form.as_p }}
+            </div>
+            <button type="submit" class="mt-4 bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded">Add Supplier</button>
+        </form>
+
+        <!-- Link to Supplier List -->
+        <a href="{% url 'supplier_list' %}" class="block mt-4 text-blue-500 hover:underline">View Supplier List</a>
+    </div>
 </body>
 </html>

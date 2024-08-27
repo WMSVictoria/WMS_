@@ -1,15 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    {% load static tailwind_tags %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Internal Transfer</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% tailwind_css %}
 </head>
-<body>
-    <h1>Internal Transfer</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Transfer</button>
-    </form>
-    <a href="{% url 'inventory_list' %}">Back to Inventory List</a>
+<body class="bg-gray-100 font-sans">
+    <header class="bg-blue-800 text-white p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-semibold">Internal Transfer</h1>
+            <a href="{% url 'internal_transfer_list' %}" class="bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded">Back to Transfer List</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-6">
+        <div class="bg-white shadow-md rounded-lg p-6">
+            <form method="post" class="space-y-4">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">Transfer</button>
+            </form>
+        </div>
+    </main>
 </body>
 </html>

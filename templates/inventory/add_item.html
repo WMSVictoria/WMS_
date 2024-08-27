@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     {% load static tailwind_tags %}
+    {% load widget_tweaks %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add New Item</title>
@@ -28,10 +29,8 @@
     </div>
 
     <div class="container mx-auto p-6">
-        <header class="bg-blue-800 text-white p-4 rounded-md shadow-md mb-6">
-            <h1 class="text-2xl font-semibold">Add New Item</h1>
-        </header>
-        
+        <h2 class="text-2xl font-semibold mb-4">Add New Item</h2>
+
         <form method="post" class="bg-white p-6 rounded-lg shadow-md">
             {% csrf_token %}
             <div class="space-y-4">
@@ -39,8 +38,10 @@
             </div>
             <button type="submit" class="mt-4 bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded">Add Item</button>
         </form>
-        
-        <a href="{% url 'inventory_list' %}" class="block mt-4 text-blue-500 hover:underline">Back to Inventory List</a>
+
+        <div class="mt-4 flex space-x-4">
+            <a href="{% url 'inventory_list' %}" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">Back to Inventory List</a>
+        </div>
     </div>
 </body>
 </html>

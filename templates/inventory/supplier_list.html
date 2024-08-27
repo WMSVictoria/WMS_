@@ -1,128 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% load static tailwind_tags %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Supplier List</title>
-    <!-- <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        #header {
-            background-color: navy;
-            color: white;
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        #header h1 {
-            margin: 0;
-        }
-        #header a {
-            color: white;
-            text-decoration: none;
-            padding: 5px 10px;
-            margin-left: 10px;
-            border-radius: 3px;
-        }
-        #header a:hover {
-            background-color: #003366;
-        }
-        .container {
-            padding: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: #fff;
-            border: 1px solid #ddd;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        a.button {
-            display: inline-block;
-            background-color: #007bff;
-            color: white;
-            padding: 10px 15px;
-            text-decoration: none;
-            border-radius: 5px;
-            margin-right: 10px;
-        }
-        a.button:hover {
-            background-color: #0056b3;
-        }
-        a.button-delete {
-            background-color: #dc3545;
-        }
-        a.button-delete:hover {
-            background-color: #c82333;
-        }
-        .actions a {
-            margin-right: 10px;
-        }
-    </style> -->
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        {% load static tailwind_tags %}
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Supplier List</title>
-        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-        {% tailwind_css %}
-    </head>
-    <body class="bg-gray-100 font-sans">
-        <div class="container mx-auto p-6">
-            <div class="flex justify-between items-center mb-6">
-                <h1 class="text-3xl font-semibold">Supplier List</h1>
-                <div class="flex items-center space-x-4">
-                    <span class="text-gray-700">Welcome, {{ user.username }}!</span>
-                    <a href="{% url 'logout' %}" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded">Logout</a>
-                </div>
-            </div>
-    
-            <div class="flex justify-end mb-4">
-                <a href="{% url 'add_supplier' %}" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">Add New Supplier</a>
-            </div>
-    
-            <div class="bg-white shadow-md rounded-lg overflow-hidden">
-                <table class="min-w-full leading-normal">
-                    <thead>
-                        <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-                            <th class="py-3 px-6 text-left">ID</th>
-                            <th class="py-3 px-6 text-left">Name</th>
-                            <th class="py-3 px-6 text-left">Address</th>
-                            <th class="py-3 px-6 text-left">Contact</th>
-                            <th class="py-3 px-6 text-center">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="text-gray-700 text-sm font-light">
-                        {% for supplier in suppliers %}
-                        <tr class="border-b border-gray-200 hover:bg-gray-100">
-                            <td class="py-3 px-6 text-left">{{ supplier.id }}</td>
-                            <td class="py-3 px-6 text-left">{{ supplier.name }}</td>
-                            <td class="py-3 px-6 text-left">{{ supplier.address }}</td>
-                            <td class="py-3 px-6 text-left">{{ supplier.contact }}</td>
-                            <td class="py-3 px-6 text-center">
-                                <a href="{% url 'edit_supplier' supplier.pk %}" class="bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-3 rounded">Edit</a>
-                                <a href="{% url 'delete_supplier' supplier.pk %}" class="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded">Delete</a>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% tailwind_css %}
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="container mx-auto p-6">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-semibold">Supplier List</h1>
+            <div class="flex items-center space-x-4">
+                <span class="text-gray-700">Welcome, {{ user.username }}!</span>
+                <a href="{% url 'logout' %}" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded">Logout</a>
             </div>
         </div>
-    </body>
-    </html>
-    
+
+        <div class="flex justify-end mb-4">
+            <a href="{% url 'add_supplier' %}" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">Add New Supplier</a>
+        </div>
+
+        <div class="bg-white shadow-md rounded-lg overflow-hidden">
+            <table class="min-w-full leading-normal">
+                <thead>
+                    <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                        <th class="py-3 px-6 text-left">ID</th>
+                        <th class="py-3 px-6 text-left">Name</th>
+                        <th class="py-3 px-6 text-left">Address</th>
+                        <th class="py-3 px-6 text-left">Contact</th>
+                        <th class="py-3 px-6 text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-700 text-sm font-light">
+                    {% for supplier in suppliers %}
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-6 text-left">{{ supplier.id }}</td>
+                        <td class="py-3 px-6 text-left">{{ supplier.name }}</td>
+                        <td class="py-3 px-6 text-left">{{ supplier.address }}</td>
+                        <td class="py-3 px-6 text-left">{{ supplier.contact }}</td>
+                        <td class="py-3 px-6 text-center">
+                            <a href="{% url 'edit_supplier' supplier.pk %}" class="bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-3 rounded">Edit</a>
+                            <a href="{% url 'delete_supplier' supplier.pk %}" class="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Link to Inventory List -->
+        <div class="mt-6 flex justify-start">
+            <a href="{% url 'inventory_list' %}" class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded">Back to Inventory List</a>
+        </div>
+    </div>
+</body>
+</html>

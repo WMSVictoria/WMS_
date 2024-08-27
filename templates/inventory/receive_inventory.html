@@ -1,78 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% load static tailwind_tags %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Receive Inventory</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        #header {
-            background-color: navy;
-            color: white;
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        #header h1 {
-            margin: 0;
-        }
-        #header a {
-            color: white;
-            text-decoration: none;
-            padding: 5px 10px;
-            margin-left: 10px;
-            border-radius: 3px;
-        }
-        #header a:hover {
-            background-color: #003366;
-        }
-        .container {
-            padding: 20px;
-        }
-        form {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
-            margin: 20px auto;
-        }
-        form p {
-            margin: 0 0 15px;
-        }
-        form button {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        form button:hover {
-            background-color: #0056b3;
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% tailwind_css %}
 </head>
-<body>
-    <div id="header">
-        <h1>Receive Inventory</h1>
-        <div>
-            <span>Welcome, {{ user.username }}!</span>
-            <a href="{% url 'logout' %}" class="button">Logout</a>
+<body class="bg-gray-100">
+
+    <!-- Header -->
+    <header class="bg-blue-800 text-white py-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-3xl font-bold">Receive Inventory</h1>
+            <div>
+                <span class="text-lg font-semibold">Welcome, {{ user.username }}!</span>
+                <a href="{% url 'logout' %}" class="ml-4 text-white font-semibold hover:underline">Logout</a>
+            </div>
         </div>
-    </div>
-    <div class="container">
-        <form method="post">
+    </header>
+    
+    <!-- Main Content -->
+    <div class="container mx-auto mt-8 p-6 bg-white shadow-md rounded-lg">
+        <form method="post" class="space-y-6">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit">Receive</button>
+            <div>
+                <button type="submit" class="bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700">
+                    Receive
+                </button>
+            </div>
         </form>
     </div>
+
 </body>
 </html>
