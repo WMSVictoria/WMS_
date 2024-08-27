@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-&9crp&@kj@!p!1i$9n++_08=2u=v6+m%=e$54w*+t9wrn1fq+a'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['wmsvictoria-3d9b896f40e5.herokuapp.com']
 
@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'tailwind',
     'theme',
-    'django_browser_reload',
+    #'django_browser_reload',
     'widget_tweaks',
 ]
 
@@ -62,7 +62,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django_browser_reload.middleware.BrowserReloadMiddleware',
+    #'django_browser_reload.middleware.BrowserReloadMiddleware',
 
 ]
 
@@ -163,10 +163,10 @@ EMAIL_HOST = 'smtp.gmail.com'  # Replace with your email provider's SMTP server
 EMAIL_PORT = 587  # Commonly used port for SMTP (use 465 for SSL)
 EMAIL_USE_TLS = True  # Use TLS for security (set to True if supported)
 EMAIL_USE_SSL = False  # Use SSL for security (usually either TLS or SSL, not both)
-EMAIL_HOST_USER = 'kevinogutu263@gmail.com'  # Replace with your email address
-EMAIL_HOST_PASSWORD = 'rdfjxiixnxhfmuhp'  # Replace with your email account password
+EMAIL_HOST_USER = 'projectcrew111@gmail.com'  # Replace with your email address
+EMAIL_HOST_PASSWORD = 'vfqphclsdqttglvz'  # Replace with your email account password
 DEFAULT_FROM_EMAIL = 'support@wms.com'  # Default sender email address
-ADMIN_EMAIL = 'kevinogutu270@outlook.com'
+ADMIN_EMAIL = 'jerosheilah@gmail.com'
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
