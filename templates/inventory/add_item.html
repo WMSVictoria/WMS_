@@ -1,15 +1,46 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    {% load static tailwind_tags %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add New Item</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% tailwind_css %}
 </head>
-<body>
-    <h1>Add New Item</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Add Item</button>
-    </form>
-    <a href="{% url 'inventory_list' %}">Back to Inventory List</a>
+<body class="bg-gray-100 font-sans">
+    <div id="header" class="bg-blue-800 text-white p-4 flex items-center justify-between">
+        <!-- Dashboard Button -->
+        <div class="flex space-x-4">
+            {% if is_manager %}
+                <a href="{% url 'warehouse_manager_dashboard' %}" id="dashboard-button" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded">Manager Dashboard</a>
+            {% elif is_staff %}
+                <a href="{% url 'warehouse_staff_dashboard' %}" id="dashboard-button" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded">Staff Dashboard</a>
+            {% endif %}
+        </div>
+
+        <h1 class="text-xl font-semibold text-center flex-grow">Add New Item</h1>
+
+        <div id="user-info" class="flex items-center space-x-4">
+            <span>{{ user.username }}!</span>
+            <a href="{% url 'logout' %}" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded">Logout</a>
+        </div>
+    </div>
+
+    <div class="container mx-auto p-6">
+        <header class="bg-blue-800 text-white p-4 rounded-md shadow-md mb-6">
+            <h1 class="text-2xl font-semibold">Add New Item</h1>
+        </header>
+        
+        <form method="post" class="bg-white p-6 rounded-lg shadow-md">
+            {% csrf_token %}
+            <div class="space-y-4">
+                {{ form.as_p }}
+            </div>
+            <button type="submit" class="mt-4 bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded">Add Item</button>
+        </form>
+        
+        <a href="{% url 'inventory_list' %}" class="block mt-4 text-blue-500 hover:underline">Back to Inventory List</a>
+    </div>
 </body>
 </html>

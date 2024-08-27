@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-&9crp&@kj@!p!1i$9n++_08=2u=v6+m%=e$54w*+t9wrn1fq+a'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['wmsvictoria-3d9b896f40e5.herokuapp.com']
 
@@ -33,6 +33,9 @@ ALLOWED_HOSTS = ['wmsvictoria-3d9b896f40e5.herokuapp.com']
 # Application definition
 
 INSTALLED_APPS = [
+
+    "admin_interface",
+    "colorfield",
     'django.contrib.admin',
     'django.contrib.auth',
     'users',
@@ -41,7 +44,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'tailwind',
+    'theme',
+    'django_browser_reload',
+    'widget_tweaks',
 ]
+
+TAILWIND_APP_NAME = 'theme'
+
+NPM_BIN_PATH = "C:/Program Files/nodejs/npm.cmd"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -51,6 +62,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_browser_reload.middleware.BrowserReloadMiddleware',
+
 ]
 
 ROOT_URLCONF = 'wms_victoria.urls'
@@ -151,9 +164,9 @@ EMAIL_PORT = 587  # Commonly used port for SMTP (use 465 for SSL)
 EMAIL_USE_TLS = True  # Use TLS for security (set to True if supported)
 EMAIL_USE_SSL = False  # Use SSL for security (usually either TLS or SSL, not both)
 EMAIL_HOST_USER = 'kevinogutu263@gmail.com'  # Replace with your email address
-EMAIL_HOST_PASSWORD = 'atlabsmlosbuuqlj'  # Replace with your email account password
-DEFAULT_FROM_EMAIL = 'kevinogutu263@gmail.com'  # Default sender email address
-ADMIN_EMAIL = 'wmsvictoria@outlook.com'
+EMAIL_HOST_PASSWORD = 'rdfjxiixnxhfmuhp'  # Replace with your email account password
+DEFAULT_FROM_EMAIL = 'support@wms.com'  # Default sender email address
+ADMIN_EMAIL = 'kevinogutu270@outlook.com'
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
@@ -162,4 +175,6 @@ django_heroku.settings(locals())
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
+
+
 

@@ -1,79 +1,88 @@
-<!-- templates/inventory/ad_hoc_report.html -->
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    {% load static tailwind_tags %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ad-Hoc Reporting</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% tailwind_css %}
 </head>
-<body>
-    <h1>Ad-Hoc Reporting</h1>
+<body class="bg-gray-100 font-sans">
+    <div class="container mx-auto p-6">
+        <h1 class="text-3xl font-semibold mb-6">Ad-Hoc Reporting</h1>
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Generate Report</button>
-    </form>
+        <form method="post" class="bg-white p-8 border border-gray-200 rounded-lg shadow-md space-y-6">
+            {% csrf_token %}
+            <div class="space-y-4">
+                {{ form.as_p }}
+            </div>
+            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">Generate Report</button>
+        </form>
 
-    {% if report_data %}
-        <h2>Report Results</h2>
-        <table border="1">
-            <thead>
-                {% if form.cleaned_data.report_type == 'orders' %}
-                    <tr>
-                        <th>Order ID</th>
-                        <th>Customer</th>
-                        <th>Item</th>
-                        <th>Quantity</th>
-                        <th>Date</th>
-                        <th>Status</th>
-                    </tr>
-                {% elif form.cleaned_data.report_type == 'transfers' %}
-                    <tr>
-                        <th>Transfer ID</th>
-                        <th>Item</th>
-                        <th>Quantity</th>
-                        <th>Location</th>
-                        <th>Source Section</th>
-                        <th>Destination Section</th>
-                        <th>Date</th>
-                    </tr>
-                {% elif form.cleaned_data.report_type == 'inventory' %}
-                    <tr>
-                        <th>Item</th>
-                        <th>Location</th>
-                        <th>Section</th>
-                        <th>Quantity</th>
-                    </tr>
-                {% endif %}
-            </thead>
-            <tbody>
-                {% for entry in report_data %}
-                    <tr>
+        {% if report_data %}
+            <h2 class="text-2xl font-semibold mt-8">Report Results</h2>
+            <div class="overflow-x-auto mt-4">
+                <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+                    <thead>
                         {% if form.cleaned_data.report_type == 'orders' %}
-                            <td>{{ entry.id }}</td>
-                            <td>{{ entry.customer.name }}</td>
-                            <td>{{ entry.item.name }}</td>
-                            <td>{{ entry.quantity }}</td>
-                            <td>{{ entry.date }}</td>
-                            <td>{{ entry.status }}</td>
+                            <tr class="bg-gray-200 text-left">
+                                <th class="py-2 px-4 border-b">Order ID</th>
+                                <th class="py-2 px-4 border-b">Customer</th>
+                                <th class="py-2 px-4 border-b">Item</th>
+                                <th class="py-2 px-4 border-b">Quantity</th>
+                                <th class="py-2 px-4 border-b">Date</th>
+                                <th class="py-2 px-4 border-b">Status</th>
+                            </tr>
                         {% elif form.cleaned_data.report_type == 'transfers' %}
-                            <td>{{ entry.id }}</td>
-                            <td>{{ entry.item.name }}</td>
-                            <td>{{ entry.quantity }}</td>
-                            <td>{{ entry.location }}</td>
-                            <td>{{ entry.source_section }}</td>
-                            <td>{{ entry.destination_section }}</td>
-                            <td>{{ entry.date }}</td>
+                            <tr class="bg-gray-200 text-left">
+                                <th class="py-2 px-4 border-b">Transfer ID</th>
+                                <th class="py-2 px-4 border-b">Item</th>
+                                <th class="py-2 px-4 border-b">Quantity</th>
+                                <th class="py-2 px-4 border-b">Location</th>
+                                <th class="py-2 px-4 border-b">Source Section</th>
+                                <th class="py-2 px-4 border-b">Destination Section</th>
+                                <th class="py-2 px-4 border-b">Date</th>
+                            </tr>
                         {% elif form.cleaned_data.report_type == 'inventory' %}
-                            <td>{{ entry.item.name }}</td>
-                            <td>{{ entry.location }}</td>
-                            <td>{{ entry.section }}</td>
-                            <td>{{ entry.quantity }}</td>
+                            <tr class="bg-gray-200 text-left">
+                                <th class="py-2 px-4 border-b">Item</th>
+                                <th class="py-2 px-4 border-b">Location</th>
+                                <th class="py-2 px-4 border-b">Section</th>
+                                <th class="py-2 px-4 border-b">Quantity</th>
+                            </tr>
                         {% endif %}
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
+                    </thead>
+                    <tbody>
+                        {% for entry in report_data %}
+                            <tr class="hover:bg-gray-100">
+                                {% if form.cleaned_data.report_type == 'orders' %}
+                                    <td class="py-2 px-4 border-b">{{ entry.id }}</td>
+                                    <td class="py-2 px-4 border-b">{{ entry.customer.name }}</td>
+                                    <td class="py-2 px-4 border-b">{{ entry.item.name }}</td>
+                                    <td class="py-2 px-4 border-b">{{ entry.quantity }}</td>
+                                    <td class="py-2 px-4 border-b">{{ entry.date }}</td>
+                                    <td class="py-2 px-4 border-b">{{ entry.status }}</td>
+                                {% elif form.cleaned_data.report_type == 'transfers' %}
+                                    <td class="py-2 px-4 border-b">{{ entry.id }}</td>
+                                    <td class="py-2 px-4 border-b">{{ entry.item.name }}</td>
+                                    <td class="py-2 px-4 border-b">{{ entry.quantity }}</td>
+                                    <td class="py-2 px-4 border-b">{{ entry.location }}</td>
+                                    <td class="py-2 px-4 border-b">{{ entry.source_section }}</td>
+                                    <td class="py-2 px-4 border-b">{{ entry.destination_section }}</td>
+                                    <td class="py-2 px-4 border-b">{{ entry.date }}</td>
+                                {% elif form.cleaned_data.report_type == 'inventory' %}
+                                    <td class="py-2 px-4 border-b">{{ entry.item.name }}</td>
+                                    <td class="py-2 px-4 border-b">{{ entry.location }}</td>
+                                    <td class="py-2 px-4 border-b">{{ entry.section }}</td>
+                                    <td class="py-2 px-4 border-b">{{ entry.quantity }}</td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
 </body>
 </html>

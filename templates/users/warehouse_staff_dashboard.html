@@ -1,116 +1,142 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Warehouse Staff Dashboard</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-        }
-        header {
-            background-color: navy;
-            color: white;
-            padding: 10px;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            left: 0;
-            z-index: 1000;
-        }
-        header .welcome {
-            float: right;
-            margin-right: 20px;
-        }
-        header .welcome a {
-            color: white;
-            text-decoration: none;
-            margin-left: 10px;
-            font-weight: bold;
-        }
-        header h1 {
-            margin: 0;
-            padding: 0;
-        }
-        nav {
-            width: 200px;
-            background-color: #f4f4f4;
-            position: fixed;
-            top: 50px;
-            bottom: 0;
-            left: 0;
-            padding-top: 20px;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-        }
-        nav ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-        }
-        nav ul li {
-            margin: 10px 0;
-        }
-        nav ul li a {
-            display: block;
-            padding: 10px;
-            text-decoration: none;
-            color: #333;
-            background-color: #ddd;
-            border-radius: 4px;
-            text-align: center;
-        }
-        nav ul li a:hover {
-            background-color: #ccc;
-        }
-        .container {
-            margin-left: 220px; /* Space for the sidebar */
-            padding: 20px;
-            flex: 1;
-            margin-top: 70px; /* Space for the header */
-        }
-        .logout-button {
-            float: right;
-            margin-top: 15px;
-            margin-right: 20px;
-        }
-        .logout-button a {
-            color: white;
-            text-decoration: none;
-            background-color: red;
-            padding: 10px 20px;
-            border-radius: 4px;
-            font-weight: bold;
-        }
-        .logout-button a:hover {
-            background-color: darkred;
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body>
-    <header>
-        <div class="welcome">
-            Welcome, {{ user.username }} |
-            <a href="{% url 'logout' %}" class="logout-button">Logout</a>
+<body class="bg-gray-100">
+
+    <!-- Header -->
+    <header class="bg-blue-800 text-white py-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="welcome">
+                <span class="text-lg font-semibold">Welcome, {{ user.username }}</span>
+            </div>
+            <a href="{% url 'logout' %}" class="text-white font-semibold hover:underline">Logout</a>
         </div>
-        <h1>Warehouse Staff Dashboard</h1>
+        <h1 class="text-3xl text-center mt-4">Warehouse Staff Dashboard</h1>
     </header>
     
-    <nav>
-        <ul>
-            <li><a href="{% url 'inventory_list' %}">Inventory Management</a></li>
-            <li><a href="{% url 'order_list' %}">Order Management</a></li>
-            <li><a href="{% url 'internal_transfer_list' %}">Internal Transfers</a></li>
-            <li><a href="{% url 'receive_inventory' %}">Receiving and Putaway</a></li>
-            <li><a href="{% url 'customer_list' %}">Customers</a></li>
-            <li><a href="{% url 'supplier_list' %}">Suppliers</a></li>
-
-
-        </ul>
+    <!-- Navigation -->
+    <nav class="bg-blue-700 py-3">
+        <div class="container mx-auto">
+            <ul class="flex space-x-4 justify-center">
+                <li><a href="{% url 'inventory_list' %}" class="text-white hover:underline">Inventory Management</a></li>
+                <li><a href="{% url 'order_list' %}" class="text-white hover:underline">Order Management</a></li>
+                <li><a href="{% url 'internal_transfer_list' %}" class="text-white hover:underline">Internal Transfers</a></li>
+                <li><a href="{% url 'receive_inventory' %}" class="text-white hover:underline">Receiving and Putaway</a></li>
+                <li><a href="{% url 'customer_list' %}" class="text-white hover:underline">Customers</a></li>
+                <li><a href="{% url 'supplier_list' %}" class="text-white hover:underline">Suppliers</a></li>
+            </ul>
+        </div>
     </nav>
     
-    <div class="container">
-        <!-- Main content will go here -->
+    <!-- Main Content -->
+    <div class="container mx-auto mt-8 p-4 bg-white shadow rounded">
+        <!-- KPIs and Charts -->
+        <div class="dashboard-section">
+            <h2 class="text-2xl font-bold mb-4">Key Performance Indicators (KPIs)</h2>
+            <!-- KPI Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Inventory Levels KPI -->
+                <div class="kpi-box bg-gray-200 p-4 rounded">
+                    <h3 class="text-xl font-semibold">Current Inventory Levels</h3>
+                    <canvas id="inventoryChart" class="mt-4"></canvas>
+                </div>
+
+                <!-- Order Backlog KPI -->
+                <div class="kpi-box bg-gray-200 p-4 rounded">
+                    <h3 class="text-xl font-semibold">Order Backlog</h3>
+                    <p id="orderBacklog" class="mt-2 text-lg font-medium">Loading...</p>
+                </div>
+
+                <!-- Transfer Volume KPI -->
+                <div class="kpi-box bg-gray-200 p-4 rounded">
+                    <h3 class="text-xl font-semibold">Transfer Volume</h3>
+                    <canvas id="transferVolumeChart" class="mt-4"></canvas>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- Scripts -->
+    <script>
+        // Example data for charts
+        const inventoryData = {
+            labels: ["Melbourne", "Kilmore", "Stawell", "Shepparton", "Hamilton"],
+            datasets: [{
+                label: 'Inventory Quantity',
+                data: [120, 80, 60, 90, 70], // Example quantities
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        const transferVolumeData = {
+            labels: ["Jan", "Feb", "Mar", "Apr", "May"],
+            datasets: [{
+                label: 'Transfer Volume',
+                data: [150, 200, 180, 220, 210], // Example transfer volumes
+                backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                borderColor: 'rgba(153, 102, 255, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        // Create charts
+        const ctxInventory = document.getElementById('inventoryChart').getContext('2d');
+        new Chart(ctxInventory, {
+            type: 'bar',
+            data: inventoryData,
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        beginAtZero: true
+                    },
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        const ctxTransferVolume = document.getElementById('transferVolumeChart').getContext('2d');
+        new Chart(ctxTransferVolume, {
+            type: 'line',
+            data: transferVolumeData,
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        beginAtZero: true
+                    },
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Mock data for order backlog
+        const mockOrderBacklogData = {
+            count: 42 // Example backlog count
+        };
+
+        // Display mock order backlog data
+        function displayOrderBacklog() {
+            document.getElementById('orderBacklog').textContent = mockOrderBacklogData.count || '0';
+        }
+
+        // Call the function to display order backlog on page load
+        displayOrderBacklog();
+    </script>
+    <footer class="mt-8 text-gray-600">
+        <p>© 2024, WMS_v1.0. All Rights Reserved</p>
+    </footer>
 </body>
 </html>

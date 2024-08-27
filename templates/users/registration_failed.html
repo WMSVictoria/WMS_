@@ -1,10 +1,20 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    {% load static tailwind_tags %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registration Failed</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% tailwind_css %}
 </head>
-<body>
-    <h2>Activation Failed</h2>
-    <p>There was a problem with your activation link. Please try registering again.</p>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+
+    <div class="bg-white p-8 rounded-lg shadow-lg text-center">
+        <h2 class="text-2xl font-semibold text-red-600 mb-4">Activation Failed</h2>
+        <p class="text-gray-700 mb-6">There was a problem with your activation link. Please try registering again with a different username.</p>
+        <a href="{% url 'register' %}" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">Try Again</a>
+    </div>
+
 </body>
 </html>

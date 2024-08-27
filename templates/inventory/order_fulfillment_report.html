@@ -1,38 +1,62 @@
-<!-- templates/order/order_fulfillment_report.html -->
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    {% load static tailwind_tags %}
+    {% load widget_tweaks %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Fulfillment Report</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% tailwind_css %}
 </head>
-<body>
-    <h1>Order Fulfillment Report</h1>
+<body class="bg-gray-100 font-sans">
+    <div class="container mx-auto p-6">
+        <div class="bg-white shadow-md rounded-lg p-6">
+            <h1 class="text-3xl font-semibold mb-6">Order Fulfillment Report</h1>
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Generate Report</button>
-    </form>
+            <form method="post" class="mb-6">
+                {% csrf_token %}
+                <div class="space-y-4">
+                    {% for field in form %}
+                        <div class="mb-4">
+                            <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                                {{ field.label }}
+                            </label>
+                            <div class="relative">
+                                {{ field|add_class:"block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" }}
+                                {% if field.errors %}
+                                    <p class="mt-1 text-sm text-red-600">{{ field.errors }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">Generate Report</button>
+                </div>
+            </form>
 
-    <h2>Report for: {{ start_date }} to {{ end_date }}</h2>
+            <h2 class="text-2xl font-semibold mb-4">Report for: {{ start_date }} to {{ end_date }}</h2>
 
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Total Orders</th>
-                <th>Shipped Orders</th>
-                <th>Pending Orders</th>
-                <th>Fulfillment Rate (%)</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>{{ total_orders }}</td>
-                <td>{{ shipped_orders }}</td>
-                <td>{{ pending_orders }}</td>
-                <td>{{ fulfillment_rate|floatformat:2 }}</td>
-            </tr>
-        </tbody>
-    </table>
+            <div class="overflow-x-auto">
+                <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+                    <thead class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                        <tr>
+                            <th class="py-3 px-6 text-left">Total Orders</th>
+                            <th class="py-3 px-6 text-left">Shipped Orders</th>
+                            <th class="py-3 px-6 text-left">Pending Orders</th>
+                            <th class="py-3 px-6 text-left">Fulfillment Rate (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-700 text-sm font-light">
+                        <tr class="border-b border-gray-200">
+                            <td class="py-3 px-6">{{ total_orders }}</td>
+                            <td class="py-3 px-6">{{ shipped_orders }}</td>
+                            <td class="py-3 px-6">{{ pending_orders }}</td>
+                            <td class="py-3 px-6">{{ fulfillment_rate|floatformat:2 }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

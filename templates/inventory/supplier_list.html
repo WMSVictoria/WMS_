@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Supplier List</title>
-    <style>
+    <!-- <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -70,43 +70,59 @@
         .actions a {
             margin-right: 10px;
         }
-    </style>
-</head>
-<body>
-    <div id="header">
-        <h1>Supplier List</h1>
-        <div>
-            <span>Welcome, {{ user.username }}!</span>
-            <a href="{% url 'logout' %}" class="button">Logout</a>
+    </style> -->
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        {% load static tailwind_tags %}
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Supplier List</title>
+        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+        {% tailwind_css %}
+    </head>
+    <body class="bg-gray-100 font-sans">
+        <div class="container mx-auto p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-3xl font-semibold">Supplier List</h1>
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-700">Welcome, {{ user.username }}!</span>
+                    <a href="{% url 'logout' %}" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded">Logout</a>
+                </div>
+            </div>
+    
+            <div class="flex justify-end mb-4">
+                <a href="{% url 'add_supplier' %}" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">Add New Supplier</a>
+            </div>
+    
+            <div class="bg-white shadow-md rounded-lg overflow-hidden">
+                <table class="min-w-full leading-normal">
+                    <thead>
+                        <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                            <th class="py-3 px-6 text-left">ID</th>
+                            <th class="py-3 px-6 text-left">Name</th>
+                            <th class="py-3 px-6 text-left">Address</th>
+                            <th class="py-3 px-6 text-left">Contact</th>
+                            <th class="py-3 px-6 text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-700 text-sm font-light">
+                        {% for supplier in suppliers %}
+                        <tr class="border-b border-gray-200 hover:bg-gray-100">
+                            <td class="py-3 px-6 text-left">{{ supplier.id }}</td>
+                            <td class="py-3 px-6 text-left">{{ supplier.name }}</td>
+                            <td class="py-3 px-6 text-left">{{ supplier.address }}</td>
+                            <td class="py-3 px-6 text-left">{{ supplier.contact }}</td>
+                            <td class="py-3 px-6 text-center">
+                                <a href="{% url 'edit_supplier' supplier.pk %}" class="bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-3 rounded">Edit</a>
+                                <a href="{% url 'delete_supplier' supplier.pk %}" class="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded">Delete</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
-    <div class="container">
-        <a href="{% url 'add_supplier' %}" class="button">Add New Supplier</a>
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Address</th>
-                    <th>Contact</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for supplier in suppliers %}
-                <tr>
-                    <td>{{ supplier.id }}</td>
-                    <td>{{ supplier.name }}</td>
-                    <td>{{ supplier.address }}</td>
-                    <td>{{ supplier.contact }}</td>
-                    <td class="actions">
-                        <a href="{% url 'edit_supplier' supplier.pk %}" class="button">Edit</a>
-                        <a href="{% url 'delete_supplier' supplier.pk %}" class="button button-delete">Delete</a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</body>
-</html>
+    </body>
+    </html>
+    

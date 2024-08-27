@@ -1,33 +1,62 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    {% load static tailwind_tags %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modify Item</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% tailwind_css %}
 </head>
-<body>
-    <h1>Modify Item</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Item</th>
-                <th>SKU</th>
-                <th>Description</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in items %}
-            <tr>
-                <td>{{ item.name }}</td>
-                <td>{{ item.sku }}</td>
-                <td>{{ item.description }}</td>
-                <td>
-                    <a href="{% url 'item_update' item.pk %}">Update</a> |
-                    <a href="{% url 'item_delete' item.pk %}">Delete</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <a href="{% url 'inventory_list' %}">Back to Inventory List</a>
+<body class="bg-gray-100 font-sans">
+    <div id="header" class="bg-blue-800 text-white p-4 flex items-center justify-between">
+        <!-- Dashboard Button -->
+        <div class="flex space-x-4">
+            {% if is_manager %}
+                <a href="{% url 'warehouse_manager_dashboard' %}" id="dashboard-button" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded">Manager Dashboard</a>
+            {% elif is_staff %}
+                <a href="{% url 'warehouse_staff_dashboard' %}" id="dashboard-button" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded">Staff Dashboard</a>
+            {% endif %}
+        </div>
+
+        <h1 class="text-xl font-semibold text-center flex-grow">Modify Item</h1>
+
+        <div id="user-info" class="flex items-center space-x-4">
+            <span>{{ user.username }}!</span>
+            <a href="{% url 'logout' %}" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded">Logout</a>
+        </div>
+    </div>
+
+    <div class="container mx-auto p-6">
+        <h2 class="text-2xl font-semibold mb-4">Modify Item</h2>
+
+        <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+            <thead>
+                <tr class="bg-gray-100 border-b">
+                    <th class="py-2 px-4 text-left text-gray-600">Item</th>
+                    <th class="py-2 px-4 text-left text-gray-600">SKU</th>
+                    <th class="py-2 px-4 text-left text-gray-600">Description</th>
+                    <th class="py-2 px-4 text-left text-gray-600">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="py-2 px-4">{{ item.name }}</td>
+                    <td class="py-2 px-4">{{ item.sku }}</td>
+                    <td class="py-2 px-4">{{ item.description }}</td>
+                    <td class="py-2 px-4">
+                        <a href="{% url 'item_update' item.pk %}" class="bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded">Update</a>
+                        <a href="{% url 'item_delete' item.pk %}" class="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="mt-4 flex space-x-4">
+            <a href="{% url 'inventory_list' %}" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">Back to Inventory List</a>
+        </div>
+    </div>
 </body>
 </html>

@@ -1,15 +1,41 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    {% load static tailwind_tags %}
+    {% load widget_tweaks %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Order</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% tailwind_css %}
 </head>
-<body>
-    <h1>Create Order</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Create Order</button>
-    </form>
-    <a href="{% url 'order_list' %}">Back to Order List</a>
+<body class="bg-gray-100 font-sans">
+    <div class="container mx-auto p-6">
+        <h1 class="text-3xl font-semibold mb-6">Create Order</h1>
+
+        <form method="post" class="bg-white p-8 border border-gray-200 rounded-lg shadow-md space-y-6">
+            {% csrf_token %}
+            <div class="space-y-4">
+                {% for field in form %}
+                    <div class="mb-4">
+                        <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                            {{ field.label }}
+                        </label>
+                        <div class="relative">
+                            {{ field|add_class:"block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" }}
+                            {% if field.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ field.errors }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">Create Order</button>
+        </form>
+
+        <div class="mt-4">
+            <a href="{% url 'order_list' %}" class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded">Back to Order List</a>
+        </div>
+    </div>
 </body>
 </html>
