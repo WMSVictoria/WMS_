@@ -10,7 +10,6 @@ cookiecutter==2.6.0
 dj-database-url==2.2.0
 Django==4.2.14
 django-admin-interface==0.28.8
-django-browser-reload==1.15.0
 django-colorfield==0.11.0
 django-heroku==0.3.1
 django-tailwind==3.8.0
