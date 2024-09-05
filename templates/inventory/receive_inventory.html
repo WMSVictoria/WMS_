@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     {% load static tailwind_tags %}
+    {% load widget_tweaks %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Receive Inventory</title>
@@ -13,24 +14,41 @@
     <!-- Header -->
     <header class="bg-blue-800 text-white py-4">
         <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-3xl font-bold">Receive Inventory</h1>
+            <div class="flex items-center">
+                <h1 class="text-3xl font-bold">Receive Inventory</h1>
+                {% if is_manager %}
+                    <a href="{% url 'warehouse_manager_dashboard' %}" class="ml-4 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded">Manager Dashboard</a>
+                {% elif is_staff %}
+                    <a href="{% url 'warehouse_staff_dashboard' %}" class="ml-4 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded">Staff Dashboard</a>
+                {% endif %}
+            </div>
             <div>
                 <span class="text-lg font-semibold">Welcome, {{ user.username }}!</span>
                 <a href="{% url 'logout' %}" class="ml-4 text-white font-semibold hover:underline">Logout</a>
             </div>
         </div>
     </header>
-    
+
     <!-- Main Content -->
     <div class="container mx-auto mt-8 p-6 bg-white shadow-md rounded-lg">
         <form method="post" class="space-y-6">
             {% csrf_token %}
-            {{ form.as_p }}
-            <div>
-                <button type="submit" class="bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700">
-                    Receive
-                </button>
+            <div class="space-y-4">
+                {% for field in form %}
+                    <div>
+                        <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                            {{ field.label }}
+                        </label>
+                        {{ field|add_class:"block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" }}
+                        {% if field.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ field.errors }}</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
             </div>
+            <button type="submit" class="bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700">
+                Receive
+            </button>
         </form>
     </div>
 

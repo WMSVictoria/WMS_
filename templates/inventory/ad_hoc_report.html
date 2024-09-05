@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     {% load static tailwind_tags %}
+    {% load widget_tweaks %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ad-Hoc Reporting</title>
@@ -9,15 +10,30 @@
     {% tailwind_css %}
 </head>
 <body class="bg-gray-100 font-sans">
-    <div class="container mx-auto p-6">
-        <h1 class="text-3xl font-semibold mb-6">Ad-Hoc Reporting</h1>
+    <header class="bg-blue-800 text-white py-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <div>
+                {% if is_manager %}
+                    <a href="{% url 'warehouse_manager_dashboard' %}" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded">Manager Dashboard</a>
+                {% elif is_staff %}
+                    <a href="{% url 'warehouse_staff_dashboard' %}" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded">Staff Dashboard</a>
+                {% endif %}
+            </div>
+            <h1 class="text-3xl font-semibold">Ad-Hoc Reporting</h1>
+            <div class="flex items-center">
+                <span class="text-lg font-semibold mr-4">Welcome, {{ user.username }}!</span>
+                <a href="{% url 'logout' %}" class="text-white font-semibold hover:underline">Logout</a>
+            </div>
+        </div>
+    </header>
 
+    <main class="container mx-auto p-6 mt-8">
         <form method="post" class="bg-white p-8 border border-gray-200 rounded-lg shadow-md space-y-6">
             {% csrf_token %}
             <div class="space-y-4">
                 {{ form.as_p }}
             </div>
-            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">Generate Report</button>
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">Generate Report</button>
         </form>
 
         {% if report_data %}
@@ -83,6 +99,6 @@
                 </table>
             </div>
         {% endif %}
-    </div>
+    </main>
 </body>
 </html>

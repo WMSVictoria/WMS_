@@ -9,20 +9,38 @@
     {% tailwind_css %}
 </head>
 <body class="bg-gray-100 font-sans">
-    <div class="container mx-auto p-6">
-        <header class="flex justify-between items-center bg-blue-800 text-white p-4 rounded-md shadow-md mb-6">
-            <h1 class="text-2xl font-semibold">Item List</h1>
-            <a href="{% url 'add_item' %}" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded">Add New Item</a>
-        </header>
+    <header class="bg-blue-800 text-white p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex space-x-4">
+                {% if is_manager %}
+                    <a href="{% url 'warehouse_manager_dashboard' %}" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded">Manager Dashboard</a>
+                {% elif is_staff %}
+                    <a href="{% url 'warehouse_staff_dashboard' %}" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded">Staff Dashboard</a>
+                {% endif %}
+            </div>
 
-        <div class="overflow-x-auto mb-4">
-            <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+            <h1 class="text-xl font-semibold">Item List</h1>
+
+            <div class="flex items-center space-x-4">
+                <span class="text-gray-300">Welcome, {{ user.username }}!</span>
+                <a href="{% url 'logout' %}" class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-6">
+        <div class="flex justify-end mb-4">
+            <a href="{% url 'add_item' %}" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded">Add New Item</a>
+        </div>
+
+        <div class="overflow-x-auto bg-white shadow-md rounded-lg">
+            <table class="min-w-full border border-gray-200 rounded-lg">
                 <thead class="bg-gray-100">
                     <tr>
                         <th class="py-2 px-4 text-left text-gray-600">Name</th>
                         <th class="py-2 px-4 text-left text-gray-600">SKU</th>
                         <th class="py-2 px-4 text-left text-gray-600">Description</th>
-                        <th class="py-2 px-4 text-left text-gray-600">Actions</th>
+                        <th class="py-2 px-4 text-center text-gray-600">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -31,7 +49,7 @@
                         <td class="py-2 px-4">{{ item.name }}</td>
                         <td class="py-2 px-4">{{ item.sku }}</td>
                         <td class="py-2 px-4">{{ item.description }}</td>
-                        <td class="py-2 px-4 flex space-x-2">
+                        <td class="py-2 px-4 flex space-x-2 justify-center">
                             <a href="{% url 'edit_item' item.pk %}" class="bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded">Edit</a>
                             <a href="{% url 'delete_item' item.pk %}" class="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded">Delete</a>
                         </td>
@@ -40,11 +58,6 @@
                 </tbody>
             </table>
         </div>
-
-        <!-- Back to Inventory List Link -->
-        <div class="mt-4">
-            <a href="{% url 'inventory_list' %}" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">Back to Inventory List</a>
-        </div>
-    </div>
+    </main>
 </body>
 </html>

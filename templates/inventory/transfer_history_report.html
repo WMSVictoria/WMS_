@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     {% load static tailwind_tags %}
+    {% load widget_tweaks %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Transfer History Report</title>
@@ -9,49 +10,62 @@
     {% tailwind_css %}
 </head>
 <body class="bg-gray-100 font-sans">
-    <header class="bg-blue-800 text-white p-4">
-        <div class="container mx-auto">
-            <h1 class="text-2xl font-semibold">Transfer History Report</h1>
+
+    <!-- Header -->
+    <header class="bg-blue-800 text-white py-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-3xl font-bold">Transfer History Report</h1>
+            <div>
+                {% if is_manager %}
+                    <a href="{% url 'warehouse_manager_dashboard' %}" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded">Manager Dashboard</a>
+                {% elif is_staff %}
+                    <a href="{% url 'warehouse_staff_dashboard' %}" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded">Staff Dashboard</a>
+                {% endif %}
+                <span class="text-lg font-semibold ml-4">Welcome, {{ user.username }}!</span>
+                <a href="{% url 'logout' %}" class="ml-4 text-white font-semibold hover:underline">Logout</a>
+            </div>
         </div>
     </header>
 
-    <main class="container mx-auto p-6">
-        <div class="bg-white shadow-md rounded-lg p-6 mb-6">
-            <form method="post" class="mb-6">
+    <!-- Main Content -->
+    <main class="container mx-auto mt-8 p-6 bg-white shadow-md rounded-lg">
+        <div class="mb-6">
+            <form method="post" class="space-y-4">
                 {% csrf_token %}
-                <div class="space-y-4">
+                <div>
                     {{ form.as_p }}
-                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">Generate Report</button>
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">Generate Report</button>
                 </div>
             </form>
-
-            <h2 class="text-xl font-semibold mb-4">Report for: {{ start_date }} to {{ end_date }}</h2>
-
-            <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
-                <thead>
-                    <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-                        <th class="py-3 px-6 text-left">Date</th>
-                        <th class="py-3 px-6 text-left">Item</th>
-                        <th class="py-3 px-6 text-left">Quantity</th>
-                        <th class="py-3 px-6 text-left">Location</th>
-                        <th class="py-3 px-6 text-left">Source Section</th>
-                        <th class="py-3 px-6 text-left">Destination Section</th>
-                    </tr>
-                </thead>
-                <tbody class="text-gray-700 text-sm font-light">
-                    {% for transfer in transfers %}
-                        <tr class="border-b border-gray-200 hover:bg-gray-100">
-                            <td class="py-3 px-6">{{ transfer.date }}</td>
-                            <td class="py-3 px-6">{{ transfer.item.name }}</td>
-                            <td class="py-3 px-6">{{ transfer.quantity }}</td>
-                            <td class="py-3 px-6">{{ transfer.location }}</td>
-                            <td class="py-3 px-6">{{ transfer.source_section }}</td>
-                            <td class="py-3 px-6">{{ transfer.destination_section }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
         </div>
+
+        <h2 class="text-xl font-semibold mb-4">Report for: {{ start_date }} to {{ end_date }}</h2>
+
+        <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+            <thead>
+                <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                    <th class="py-3 px-6 text-left">Date</th>
+                    <th class="py-3 px-6 text-left">Item</th>
+                    <th class="py-3 px-6 text-left">Quantity</th>
+                    <th class="py-3 px-6 text-left">Location</th>
+                    <th class="py-3 px-6 text-left">Source Section</th>
+                    <th class="py-3 px-6 text-left">Destination Section</th>
+                </tr>
+            </thead>
+            <tbody class="text-gray-700 text-sm font-light">
+                {% for transfer in transfers %}
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-6">{{ transfer.date }}</td>
+                        <td class="py-3 px-6">{{ transfer.item.name }}</td>
+                        <td class="py-3 px-6">{{ transfer.quantity }}</td>
+                        <td class="py-3 px-6">{{ transfer.location }}</td>
+                        <td class="py-3 px-6">{{ transfer.source_section }}</td>
+                        <td class="py-3 px-6">{{ transfer.destination_section }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </main>
+
 </body>
 </html>

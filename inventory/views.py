@@ -97,6 +97,12 @@ from django.shortcuts import render, redirect
 from .models import Receiving, Inventory
 from .forms import ReceivingForm
 
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .models import Inventory
+from .forms import ReceivingForm
+
+@login_required
 def receive_inventory(request):
     if request.method == 'POST':
         form = ReceivingForm(request.POST)
@@ -122,7 +128,15 @@ def receive_inventory(request):
     else:
         form = ReceivingForm()
 
-    return render(request, 'inventory/receive_inventory.html', {'form': form})
+    # Check if the user is in 'warehouse_managers' or 'warehouse_staff' group
+    is_manager = request.user.groups.filter(name='warehouse_managers').exists()
+    is_staff = request.user.groups.filter(name='warehouse_staff').exists()
+
+    return render(request, 'inventory/receive_inventory.html', {
+        'form': form,
+        'is_manager': is_manager,
+        'is_staff': is_staff,
+    })
 
 from django.shortcuts import render, redirect
 from .models import  Receiving
@@ -153,9 +167,23 @@ def add_supplier(request):
         form = SupplierForm()
     return render(request, 'inventory/add_supplier.html', {'form': form})
 
+@login_required
 def supplier_list(request):
+    # Fetch all suppliers
     suppliers = Supplier.objects.all()
-    return render(request, 'inventory/supplier_list.html', {'suppliers': suppliers})
+    
+    # Check if the user is in 'warehouse_managers' or 'warehouse_staff' group
+    is_manager = request.user.groups.filter(name='warehouse_managers').exists()
+    is_staff = request.user.groups.filter(name='warehouse_staff').exists()
+
+    # Pass suppliers and group info to the template
+    context = {
+        'suppliers': suppliers,
+        'is_manager': is_manager,
+        'is_staff': is_staff,
+    }
+    
+    return render(request, 'inventory/supplier_list.html', context)
 
 def edit_supplier(request, pk):
     supplier = get_object_or_404(Supplier, pk=pk)
@@ -221,9 +249,27 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import InternalTransfer
 from .forms import InternalTransferForm
 
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+
+@login_required
 def internal_transfer_list(request):
+    # Fetch all internal transfers
     transfers = InternalTransfer.objects.all()
-    return render(request, 'inventory/internal_transfer_list.html', {'transfers': transfers})
+    
+    # Check if the user is in 'warehouse_managers' or 'warehouse_staff' group
+    is_warehouse_manager = request.user.groups.filter(name='warehouse_managers').exists()
+    is_warehouse_staff = request.user.groups.filter(name='warehouse_staff').exists()
+
+    # Pass transfers and group info to the template
+    context = {
+        'transfers': transfers,
+        'is_warehouse_manager': is_warehouse_manager,
+        'is_warehouse_staff': is_warehouse_staff,
+    }
+    
+    return render(request, 'inventory/internal_transfer_list.html', context)
+
 
 def internal_transfer_update(request, pk):
     transfer = get_object_or_404(InternalTransfer, pk=pk)
@@ -330,16 +376,44 @@ def delete_customer(request, pk):
         return redirect('customer_list')
     return render(request, 'inventory/delete_customer.html', {'customer': customer})
 
+@login_required
 def customer_list(request):
+    # Fetch all customers
     customers = Customer.objects.all()
-    return render(request, 'inventory/customer_list.html', {'customers': customers})
+    
+    # Check if the user is in 'warehouse_managers' or 'warehouse_staff' group
+    is_manager = request.user.groups.filter(name='warehouse_managers').exists()
+    is_staff = request.user.groups.filter(name='warehouse_staff').exists()
+
+    # Pass customers and group info to the template
+    context = {
+        'customers': customers,
+        'is_manager': is_manager,
+        'is_staff': is_staff,
+    }
+    
+    return render(request, 'inventory/customer_list.html', context)
 
 from django.shortcuts import render
 from .models import Order
 
+@login_required
 def order_list(request):
+    # Fetch all orders
     orders = Order.objects.all()
-    return render(request, 'inventory/order_list.html', {'orders': orders})
+    
+    # Check if the user is in 'warehouse_managers' or 'warehouse_staff' group
+    is_warehouse_manager = request.user.groups.filter(name='warehouse_managers').exists()
+    is_warehouse_staff = request.user.groups.filter(name='warehouse_staff').exists()
+
+    # Pass orders and group info to the template
+    context = {
+        'orders': orders,
+        'is_warehouse_manager': is_warehouse_manager,
+        'is_warehouse_staff': is_warehouse_staff,
+    }
+    
+    return render(request, 'inventory/order_list.html', context)
 
 from django.shortcuts import get_object_or_404
 
@@ -357,9 +431,27 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Item
 from .forms import ItemForm
 
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+
+@login_required
 def item_list(request):
+    # Fetch all items
     items = Item.objects.all()
-    return render(request, 'inventory/item_list.html', {'items': items})
+    
+    # Check if the user is in 'warehouse_managers' or 'warehouse_staff' group
+    is_manager = request.user.groups.filter(name='warehouse_managers').exists()
+    is_staff = request.user.groups.filter(name='warehouse_staff').exists()
+
+    # Pass items and group info to the template
+    context = {
+        'items': items,
+        'is_manager': is_manager,
+        'is_staff': is_staff,
+    }
+    
+    return render(request, 'inventory/item_list.html', context)
+
 
 def add_item(request):
     if request.method == 'POST':
@@ -397,6 +489,7 @@ from .models import  Order, Customer
 from django.shortcuts import render
 
 
+@login_required
 def inventory_report(request):
     # Fetch all inventory records
     inventory_items = Inventory.objects.all()
@@ -405,10 +498,28 @@ def inventory_report(request):
     low_stock_threshold = 10
     low_stock_items = inventory_items.filter(quantity__lt=low_stock_threshold)
 
+    # Apply search filters
+    item_name = request.GET.get('item', '')
+    location = request.GET.get('location', '')
+    section = request.GET.get('section', '')
+
+    if item_name:
+        inventory_items = inventory_items.filter(item__name__icontains=item_name)
+    if location:
+        inventory_items = inventory_items.filter(location__icontains=location)
+    if section:
+        inventory_items = inventory_items.filter(section__icontains=section)
+
+    # Check if the user is in 'warehouse_managers' or 'warehouse_staff' group
+    is_manager = request.user.groups.filter(name='warehouse_managers').exists()
+    is_staff = request.user.groups.filter(name='warehouse_staff').exists()
+
     return render(request, 'inventory/inventory_report.html', {
         'inventory_items': inventory_items,
         'low_stock_items': low_stock_items,
-        'low_stock_threshold': low_stock_threshold
+        'low_stock_threshold': low_stock_threshold,
+        'is_manager': is_manager,
+        'is_staff': is_staff,
     })
 
 from django.shortcuts import render
@@ -416,6 +527,7 @@ from django.db.models import Sum
 from .models import Inventory, Order
 from datetime import datetime, timedelta
 
+@login_required
 def inventory_turnover(request):
     # Define the period for analysis (e.g., the last 30 days)
     end_date = datetime.now()
@@ -426,6 +538,18 @@ def inventory_turnover(request):
 
     # Calculate the average inventory for each item (assuming constant inventory levels for simplicity)
     inventory_levels = Inventory.objects.all()
+
+    # Apply search filters
+    item_name = request.GET.get('item', '')
+    location = request.GET.get('location', '')
+    section = request.GET.get('section', '')
+
+    if item_name:
+        inventory_levels = inventory_levels.filter(item__name__icontains=item_name)
+    if location:
+        inventory_levels = inventory_levels.filter(location__icontains=location)
+    if section:
+        inventory_levels = inventory_levels.filter(section__icontains=section)
 
     turnover_data = []
     for inventory_item in inventory_levels:
@@ -442,10 +566,16 @@ def inventory_turnover(request):
             'turnover_rate': turnover_rate,
         })
 
+    # Check if the user is in 'warehouse_managers' or 'warehouse_staff' group
+    is_manager = request.user.groups.filter(name='warehouse_managers').exists()
+    is_staff = request.user.groups.filter(name='warehouse_staff').exists()
+
     return render(request, 'inventory/inventory_turnover.html', {
         'turnover_data': turnover_data,
         'start_date': start_date,
         'end_date': end_date,
+        'is_manager': is_manager,
+        'is_staff': is_staff,
     })
 
 # views.py
@@ -459,6 +589,7 @@ class DateRangeForm(forms.Form):
     start_date = forms.DateField(widget=forms.SelectDateWidget)
     end_date = forms.DateField(widget=forms.SelectDateWidget)
 
+@login_required
 def order_fulfillment_report(request):
     # Default date range (last 30 days)
     end_date = datetime.now().date()
@@ -483,6 +614,10 @@ def order_fulfillment_report(request):
     # Calculate fulfillment rate
     fulfillment_rate = (shipped_orders / total_orders * 100) if total_orders > 0 else 0
 
+    # Check if the user is in 'warehouse_managers' or 'warehouse_staff' group
+    is_manager = request.user.groups.filter(name='warehouse_managers').exists()
+    is_staff = request.user.groups.filter(name='warehouse_staff').exists()
+
     return render(request, 'inventory/order_fulfillment_report.html', {
         'form': form,
         'total_orders': total_orders,
@@ -491,6 +626,8 @@ def order_fulfillment_report(request):
         'fulfillment_rate': fulfillment_rate,
         'start_date': start_date,
         'end_date': end_date,
+        'is_manager': is_manager,
+        'is_staff': is_staff,
     })
 
 # views.py
@@ -511,6 +648,7 @@ class DateRangeForm(forms.Form):
     start_date = forms.DateField(widget=forms.SelectDateWidget)
     end_date = forms.DateField(widget=forms.SelectDateWidget)
 
+@login_required
 def goods_received_report(request):
     # Default date range (last 30 days)
     end_date = datetime.now().date()
@@ -527,13 +665,18 @@ def goods_received_report(request):
     # Query the received goods within the selected date range
     received_goods = Receiving.objects.filter(received_date__range=[start_date, end_date])
 
+    # Check if the user is in 'warehouse_managers' or 'warehouse_staff' group
+    is_manager = request.user.groups.filter(name='warehouse_managers').exists()
+    is_staff = request.user.groups.filter(name='warehouse_staff').exists()
+
     return render(request, 'inventory/goods_received_report.html', {
         'form': form,
         'received_goods': received_goods,
         'start_date': start_date,
         'end_date': end_date,
+        'is_manager': is_manager,
+        'is_staff': is_staff,
     })
-
 
 # views.py
 
@@ -546,6 +689,7 @@ class DateRangeForm(forms.Form):
     start_date = forms.DateField(widget=forms.SelectDateWidget)
     end_date = forms.DateField(widget=forms.SelectDateWidget)
 
+@login_required
 def transfer_history_report(request):
     # Default date range (last 30 days)
     end_date = datetime.now().date()
@@ -562,13 +706,18 @@ def transfer_history_report(request):
     # Query the internal transfers within the selected date range
     transfers = InternalTransfer.objects.filter(date__range=[start_date, end_date])
 
+    # Check if the user is in 'warehouse_managers' or 'warehouse_staff' group
+    is_manager = request.user.groups.filter(name='warehouse_managers').exists()
+    is_staff = request.user.groups.filter(name='warehouse_staff').exists()
+
     return render(request, 'inventory/transfer_history_report.html', {
         'form': form,
         'transfers': transfers,
         'start_date': start_date,
         'end_date': end_date,
+        'is_manager': is_manager,
+        'is_staff': is_staff,
     })
-
 
 # views.py
 
@@ -577,6 +726,12 @@ from .models import Order, InternalTransfer, Inventory
 from .forms import AdHocReportForm
 from datetime import datetime
 
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from .forms import AdHocReportForm
+from .models import Order, InternalTransfer, Inventory
+
+@login_required
 def ad_hoc_report(request):
     form = AdHocReportForm(request.POST or None)
     report_data = None
@@ -591,13 +746,11 @@ def ad_hoc_report(request):
         section = form.cleaned_data['section']
         customer = form.cleaned_data['customer']
 
-        # Set date range if custom range is selected
         if date_range == 'custom' and (start_date and end_date):
             date_filter = {'date__range': [start_date, end_date]}
         else:
             date_filter = {}
 
-        # Generate report based on selected type
         if report_type == 'orders':
             report_data = Order.objects.filter(**date_filter)
             if location:
@@ -625,10 +778,16 @@ def ad_hoc_report(request):
             if section:
                 report_data = report_data.filter(section=section)
 
+    is_manager = request.user.groups.filter(name='warehouse_managers').exists()
+    is_staff = request.user.groups.filter(name='warehouse_staff').exists()
+
     return render(request, 'inventory/ad_hoc_report.html', {
         'form': form,
-        'report_data': report_data
+        'report_data': report_data,
+        'is_manager': is_manager,
+        'is_staff': is_staff,
     })
+
 
 # views.py
 

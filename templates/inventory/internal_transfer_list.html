@@ -4,114 +4,62 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Internal Transfers</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        #header {
-            background-color: navy;
-            color: white;
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        #header h1 {
-            margin: 0;
-        }
-        #header a {
-            color: white;
-            text-decoration: none;
-            padding: 5px 10px;
-            margin-left: 10px;
-            border-radius: 3px;
-        }
-        #header a:hover {
-            background-color: #003366;
-        }
-        .container {
-            padding: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-            background-color: #fff;
-            border: 1px solid #ddd;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        a.button {
-            display: inline-block;
-            background-color: #007bff;
-            color: white;
-            padding: 10px 15px;
-            text-decoration: none;
-            border-radius: 5px;
-            margin-right: 10px;
-        }
-        a.button:hover {
-            background-color: #0056b3;
-        }
-        a.button-delete {
-            background-color: #dc3545;
-        }
-        a.button-delete:hover {
-            background-color: #c82333;
-        }
-        .actions a {
-            margin-right: 10px;
-        }
-    </style>
+    {% load static tailwind_tags %}
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% tailwind_css %}
 </head>
-<body>
-    <div id="header">
-        <h1>WMS Victoria Internal Transfers</h1>
-        <div>
+<body class="bg-gray-100 font-sans">
+    <div id="header" class="bg-blue-800 text-white p-4 flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+            <h1 class="text-xl font-semibold">WMS Victoria Internal Transfers</h1>
+            <div class="ml-4">
+                {% if is_warehouse_manager %}
+                <a href="{% url 'warehouse_manager_dashboard' %}" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded">Manager Dashboard</a>
+                {% elif is_warehouse_staff %}
+                <a href="{% url 'warehouse_staff_dashboard' %}" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded">Staff Dashboard</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="flex items-center space-x-4">
             <span>Welcome, {{ user.username }}!</span>
-            <a href="{% url 'logout' %}" class="button">Logout</a>
+            <a href="{% url 'logout' %}" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded">Logout</a>
         </div>
     </div>
-    <div class="container">
-        <h2>Internal Transfers</h2>
-        
-        <table>
+
+    <div class="container mx-auto p-6">
+        <h2 class="text-2xl font-semibold mb-4">Internal Transfers</h2>
+
+        <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
             <thead>
-                <tr>
-                    <th>Item</th>
-                    <th>Quantity</th>
-                    <th>Location</th>
-                    <th>Source Section</th>
-                    <th>Destination Section</th>
-                    <th>Actions</th>
+                <tr class="bg-gray-100 border-b">
+                    <th class="py-2 px-4 text-left text-gray-600">Item</th>
+                    <th class="py-2 px-4 text-left text-gray-600">Quantity</th>
+                    <th class="py-2 px-4 text-left text-gray-600">Location</th>
+                    <th class="py-2 px-4 text-left text-gray-600">Source Section</th>
+                    <th class="py-2 px-4 text-left text-gray-600">Destination Section</th>
+                    <th class="py-2 px-4 text-left text-gray-600">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for transfer in transfers %}
-                <tr>
-                    <td>{{ transfer.item }}</td>
-                    <td>{{ transfer.quantity }}</td>
-                    <td>{{ transfer.location }}</td>
-                    <td>{{ transfer.source_section }}</td>
-                    <td>{{ transfer.destination_section }}</td>
-                    <td class="actions">
-                        <a href="{% url 'internal_transfer_update' transfer.pk %}" class="button">Update</a>
-                        <a href="{% url 'internal_transfer_delete' transfer.pk %}" class="button button-delete">Delete</a>
+                <tr class="border-b">
+                    <td class="py-2 px-4">{{ transfer.item }}</td>
+                    <td class="py-2 px-4">{{ transfer.quantity }}</td>
+                    <td class="py-2 px-4">{{ transfer.location }}</td>
+                    <td class="py-2 px-4">{{ transfer.source_section }}</td>
+                    <td class="py-2 px-4">{{ transfer.destination_section }}</td>
+                    <td class="py-2 px-4 flex space-x-2">
+                        <a href="{% url 'internal_transfer_update' transfer.pk %}" class="bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-3 rounded">Update</a>
+                        <a href="{% url 'internal_transfer_delete' transfer.pk %}" class="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded">Delete</a>
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
-        <a href="{% url 'internal_transfer' %}" class="button">Create New Transfer</a>
+        
+        <div class="mt-4">
+            <a href="{% url 'internal_transfer' %}" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded">Create New Transfer</a>
+        </div>
     </div>
 </body>
 </html>
