@@ -19,7 +19,7 @@ from django.urls import path, include
 from django.shortcuts import redirect
 from users.views import custom_logout
 from django.urls import path, include
-from rest_framework.routers import DefaultRouter
+#from rest_framework.routers import DefaultRouter
 #from myapp.views import MyModelViewSet
 
 
