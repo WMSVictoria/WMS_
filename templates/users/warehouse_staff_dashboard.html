@@ -49,10 +49,10 @@
                 </div>
 
                 <!-- Order Backlog KPI -->
-                <div class="kpi-box bg-gray-200 p-4 rounded">
-                    <h3 class="text-xl font-semibold">Order Backlog</h3>
-                    <p id="orderBacklog" class="mt-2 text-lg font-medium">Loading...</p>
-                </div>
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h3 class="text-2xl font-semibold mb-4">Order Backlog</h3>
+                <p id="orderBacklog" class="text-xl font-bold">{{ order_backlog }}</p>
+            </div>
 
                 <!-- Transfer Volume KPI -->
                 <div class="kpi-box bg-gray-200 p-4 rounded">
@@ -65,30 +65,33 @@
 
     <!-- Scripts -->
     <script>
-        // Example data for charts
+        // Parse inventory chart data from Django context
+        const inventoryChartData = JSON.parse('{{ inventory_chart_data|escapejs }}');
         const inventoryData = {
-            labels: ["Melbourne", "Kilmore", "Stawell", "Shepparton", "Hamilton"],
+            labels: inventoryChartData.labels,
             datasets: [{
                 label: 'Inventory Quantity',
-                data: [120, 80, 60, 90, 70], // Example quantities
+                data: inventoryChartData.data,
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 1
             }]
         };
 
+        // Parse transfer volume chart data from Django context
+        const transferVolumeChartData = JSON.parse('{{ transfer_volume_chart_data|escapejs }}');
         const transferVolumeData = {
-            labels: ["Jan", "Feb", "Mar", "Apr", "May"],
+            labels: transferVolumeChartData.labels,
             datasets: [{
                 label: 'Transfer Volume',
-                data: [150, 200, 180, 220, 210], // Example transfer volumes
+                data: transferVolumeChartData.data,
                 backgroundColor: 'rgba(153, 102, 255, 0.2)',
                 borderColor: 'rgba(153, 102, 255, 1)',
                 borderWidth: 1
             }]
         };
 
-        // Create charts
+        // Create inventory chart
         const ctxInventory = document.getElementById('inventoryChart').getContext('2d');
         new Chart(ctxInventory, {
             type: 'bar',
@@ -106,6 +109,7 @@
             }
         });
 
+        // Create transfer volume chart
         const ctxTransferVolume = document.getElementById('transferVolumeChart').getContext('2d');
         new Chart(ctxTransferVolume, {
             type: 'line',
@@ -122,22 +126,22 @@
                 }
             }
         });
-
-        // Mock data for order backlog
-        const mockOrderBacklogData = {
-            count: 42 // Example backlog count
-        };
-
-        // Display mock order backlog data
-        function displayOrderBacklog() {
-            document.getElementById('orderBacklog').textContent = mockOrderBacklogData.count || '0';
-        }
-
-        // Call the function to display order backlog on page load
-        displayOrderBacklog();
     </script>
     <footer class="mt-8 text-gray-600">
         <p>© 2024, WMS_v1.0. All Rights Reserved</p>
     </footer>
+
+    <script type="text/javascript">
+        (function(d, m){
+            var kommunicateSettings = 
+                {"appId":"20b28f189411d5c212b17ebab5d329612","popupWidget":true,"automaticChatOpenOnNavigation":true};
+            var s = document.createElement("script"); s.type = "text/javascript"; s.async = true;
+            s.src = "https://widget.kommunicate.io/v2/kommunicate.app";
+            var h = document.getElementsByTagName("head")[0]; h.appendChild(s);
+            window.kommunicate = m; m._globals = kommunicateSettings;
+        })(document, window.kommunicate || {});
+    /* NOTE : Use web server to view HTML files as real-time update will not work if you directly open the HTML file in the browser. */
+    </script>
+
 </body>
 </html>

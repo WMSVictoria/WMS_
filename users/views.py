@@ -140,10 +140,43 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, user_passes_test
 
+from django.http import JsonResponse
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import user_passes_test
+from  inventory.models import Inventory, Order, InternalTransfer
+from datetime import datetime, timedelta
+from django.db.models import Sum
+import json
+from django.db.models import Count
+
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='warehouse_managers').exists())
 def warehouse_manager_dashboard(request):
-    return render(request, 'users/warehouse_manager_dashboard.html')
+    # Fetch real-time data
+    inventory_data = Inventory.objects.values('location').annotate(total_quantity=Sum('quantity'))
+    order_backlog = Order.objects.filter(status='Pending').count()
+    transfer_volume_data = InternalTransfer.objects.filter(date__gte=datetime.now() - timedelta(days=30)).values('date').annotate(total_transfers=Count('id'))
+
+    # Format data for charts
+    inventory_chart_data = {
+        'labels': [item['location'] for item in inventory_data],
+        'data': [item['total_quantity'] for item in inventory_data]
+    }
+    
+    transfer_volume_chart_data = {
+        'labels': [item['date'].strftime('%b %Y') for item in transfer_volume_data],
+        'data': [item['total_transfers'] for item in transfer_volume_data]
+    }
+
+    # Convert data to JSON strings for safe embedding in template
+    context = {
+        'inventory_chart_data': json.dumps(inventory_chart_data),
+        'order_backlog': order_backlog,
+        'transfer_volume_chart_data': json.dumps(transfer_volume_chart_data),
+    }
+
+    return render(request, 'users/warehouse_manager_dashboard.html', context)
 
 from django.contrib.auth import logout
 from django.shortcuts import redirect
@@ -160,9 +193,32 @@ def is_warehouse_staff(user):
     return user.groups.filter(name='warehouse_staff').exists()
 
 @login_required
-@user_passes_test(is_warehouse_staff)
+@user_passes_test(lambda u: u.groups.filter(name='warehouse_staff').exists())
 def warehouse_staff_dashboard(request):
-    return render(request, 'users/warehouse_staff_dashboard.html', {'username': request.user.username})
+    # Fetch real-time data
+    inventory_data = Inventory.objects.values('location').annotate(total_quantity=Sum('quantity'))
+    order_backlog = Order.objects.filter(status='Pending').count()
+    transfer_volume_data = InternalTransfer.objects.filter(date__gte=datetime.now() - timedelta(days=30)).values('date').annotate(total_transfers=Count('id'))
+
+    # Format data for charts
+    inventory_chart_data = {
+        'labels': [item['location'] for item in inventory_data],
+        'data': [item['total_quantity'] for item in inventory_data]
+    }
+    
+    transfer_volume_chart_data = {
+        'labels': [item['date'].strftime('%b %Y') for item in transfer_volume_data],
+        'data': [item['total_transfers'] for item in transfer_volume_data]
+    }
+
+    # Convert data to JSON strings for safe embedding in template
+    context = {
+        'inventory_chart_data': json.dumps(inventory_chart_data),
+        'order_backlog': order_backlog,
+        'transfer_volume_chart_data': json.dumps(transfer_volume_chart_data),
+    }
+
+    return render(request, 'users/warehouse_staff_dashboard.html', context)
 
 def unauthorized_access(request):
     return render(request, 'users/unauthorized.html')

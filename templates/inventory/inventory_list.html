@@ -29,6 +29,7 @@
 
     <div class="container mx-auto p-6">
         <h2 class="text-2xl font-semibold mb-4">Inventory List</h2>
+        <p class="mb-4 text-red-600 font-semibold">Inventory entries highlighted in red should be replenished.</p>
 
         <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
             <thead>
@@ -41,8 +42,8 @@
                 </tr>
             </thead>
             <tbody>
-                {% for inventory in inventory_items %}
-                <tr class="border-b">
+                {% for inventory in page_obj %}
+                <tr class="border-b {% if inventory.quantity < 10 %}bg-red-100{% endif %}">
                     <td class="py-2 px-4">{{ inventory.item.name }}</td>
                     <td class="py-2 px-4">{{ inventory.quantity }}</td>
                     <td class="py-2 px-4">{{ inventory.location }}</td>
@@ -56,6 +57,21 @@
             </tbody>
         </table>
 
+        <div class="mt-6 flex justify-between items-center">
+            <div class="text-sm text-gray-600">
+                Showing page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </div>
+            <div class="flex space-x-2">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1" class="bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded">First</a>
+                    <a href="?page={{ page_obj.previous_page_number }}" class="bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded">Previous</a>
+                {% endif %}
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}" class="bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded">Next</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}" class="bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded">Last</a>
+                {% endif %}
+            </div>
+        </div>
     </div>
 </body>
 </html>

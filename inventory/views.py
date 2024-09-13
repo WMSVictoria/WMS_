@@ -5,19 +5,25 @@ from .forms import ItemForm, InventoryForm, ItemUpdateForm, InventoryUpdateForm
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .models import Inventory
+from django.core.paginator import Paginator
 
 @login_required
 def inventory_list(request):
     # Fetch inventory items
     inventory_items = Inventory.objects.all()
 
+    # Pagination setup
+    paginator = Paginator(inventory_items, 25)  # Show 25 inventory items per page
+    page_number = request.GET.get('page')  # Get the page number from the query string
+    page_obj = paginator.get_page(page_number)
+
     # Determine if the user is in the warehouse_managers or warehouse_staff group
     is_manager = request.user.groups.filter(name='warehouse_managers').exists()
     is_staff = request.user.groups.filter(name='warehouse_staff').exists()
 
-    # Pass the inventory items and user group information to the template
+    # Pass the paginated items and user group information to the template
     context = {
-        'inventory_items': inventory_items,
+        'page_obj': page_obj,
         'is_manager': is_manager,
         'is_staff': is_staff,
     }
@@ -47,7 +53,7 @@ def add_item(request):
             return redirect('inventory_list')
     else:
         form = ItemForm()
-    return render(request, 'inventory/add_item.html', {'form': form})
+    return render(request, 'inventory/item_form.html', {'form': form})
 
 def item_update(request, pk):
     item = get_object_or_404(Item, pk=pk)
@@ -297,15 +303,31 @@ from .forms import OrderForm, OrderItemForm, ShippingDetailForm
 from django.shortcuts import render, redirect
 from .models import Order
 from .forms import OrderForm
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .forms import OrderForm
+from .models import Inventory
 
 def create_order(request):
     if request.method == 'POST':
         form = OrderForm(request.POST)
         if form.is_valid():
-            form.save()
+            order = form.save(commit=False)
+            # Assuming 'item' is a field in your OrderForm that links to the Inventory model
+            item = order.item  # Replace 'item' with the actual field name in your form
+
+            # Check inventory quantity
+            inventory_item = Inventory.objects.get(id=item.id)
+            if inventory_item.quantity < 10:
+                messages.error(request, 'The quantity is not enough to create this order.')
+                return render(request, 'inventory/create_order.html', {'form': form})
+            
+            # Proceed to save the order if inventory is sufficient
+            order.save()
             return redirect('order_list')  # Ensure 'order_list' is the correct URL name for listing orders
     else:
         form = OrderForm()
+    
     return render(request, 'inventory/create_order.html', {'form': form})
 
 
